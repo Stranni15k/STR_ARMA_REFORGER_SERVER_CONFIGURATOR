@@ -1,0 +1,80 @@
+# Logs and debugging
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+.pnpm-store/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Build and output directories
+dist
+dist-ssr
+build
+out
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+.idea/
+.history/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+*.code-workspace
+
+# Testing and coverage
+coverage
+.nyc_output
+/cypress/videos/
+/cypress/screenshots/
+
+# Cache and temporary files
+.cache
+.temp
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+
+# Environment and local config
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Project specific backup files
+*.bak
+*.tmp
+*.swp

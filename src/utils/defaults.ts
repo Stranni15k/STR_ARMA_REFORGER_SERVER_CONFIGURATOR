@@ -1,0 +1,57 @@
+import type { ServerConfig } from "../types/serverConfig";
+
+export const DEFAULT_CONFIG: ServerConfig = {
+  bindAddress: "0.0.0.0",
+  bindPort: 2001,
+  publicAddress: "",
+  publicPort: 2001,
+  a2s: { address: "0.0.0.0", port: 17777 },
+  rcon: {
+    address: "127.0.0.1",
+    port: 3030,
+    password: "",
+    maxClients: 10,
+    whitelist: [],
+    blacklist: [],
+    permission: "admin",
+  },
+  game: {
+    name: "My Reforger Server",
+    password: "",
+    passwordAdmin: "",
+    scenarioId: "",
+    maxPlayers: 32,
+    visible: true,
+    modsRequiredByDefault: true,
+    crossPlatform: true,
+    supportedPlatforms: ["PLATFORM_PC", "PLATFORM_XBL", "PLATFORM_PSN"],
+    mods: [],
+    gameProperties: {
+      serverMaxViewDistance: 2500,
+      serverMinGrassDistance: 50,
+      networkViewDistance: 1000,
+      disableThirdPerson: false,
+      fastValidation: false,
+      battlEye: true,
+      vonCanTransmitCrossFaction: false,
+      vonDisableUI: false,
+      vonDisableDirectSpeechUI: false,
+      missionHeader: {
+        m_iPlayerCount: 40,
+        m_eEditableGameFlags: 6,
+        m_eDefaultGameFlags: 6,
+        other: "values"
+      },
+    },
+  },
+  operating: {
+    lobbyPlayerSynchronise: true,
+    playerSaveTime: 30,
+    aiLimit: -1,
+    disableCrashReporter: false,
+    disableServerShutdown: false,
+    slotReservationTimeout: 30,
+    disableAI: false,
+    joinQueue: { maxSize: 10 },
+  },
+};

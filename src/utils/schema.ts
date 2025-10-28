@@ -1,0 +1,62 @@
+import { z } from "zod";
+
+export const zServerConfig = z.object({
+  bindAddress: z.string().min(1),
+  bindPort: z.number().int().min(1).max(65535),
+  publicAddress: z.string(),
+  publicPort: z.number().int().min(1).max(65535),
+  a2s: z.object({
+    address: z.string(),
+    port: z.number().int().min(1).max(65535),
+  }),
+  rcon: z.object({
+    address: z.string(),
+    port: z.number().int().min(1).max(65535),
+    password: z.string(),
+    maxClients: z.number().int().min(1).max(1000),
+    whitelist: z.array(z.string()).optional(),
+    blacklist: z.array(z.string()).optional(),
+    permission: z.enum(["admin", "moderator", "observer"]).optional(),
+  }).optional(),
+  game: z.object({
+    name: z.string(),
+    password: z.string(),
+    passwordAdmin: z.string(),
+    admins: z.array(z.string()).optional(),
+    scenarioId: z.string(),
+    maxPlayers: z.number().int().min(1).max(128),
+    visible: z.boolean().optional(),
+    modsRequiredByDefault: z.boolean().optional(),
+    crossPlatform: z.boolean().optional(),
+    supportedPlatforms: z.array(z.string()).optional(),
+    mods: z.array(z.object({ 
+      modId: z.string(), 
+      name: z.string(),
+      version: z.string().optional(),
+      required: z.boolean().optional()
+    })).optional(),
+    gameProperties: z.object({
+      serverMaxViewDistance: z.number().int().min(500).max(10000),
+      serverMinGrassDistance: z.number().int().min(0).max(5000),
+      networkViewDistance: z.number().int().min(500).max(5000),
+      disableThirdPerson: z.boolean().optional(),
+      fastValidation: z.boolean().optional(),
+      battlEye: z.boolean().optional(),
+      vonCanTransmitCrossFaction: z.boolean().optional(),
+      vonDisableUI: z.boolean().optional(),
+      vonDisableDirectSpeechUI: z.boolean().optional(),
+      missionHeader: z.record(z.string(), z.any()).optional(),
+    }),
+  }),
+  operating: z.object({
+    lobbyPlayerSynchronise: z.boolean().optional(),
+    playerSaveTime: z.number().int().min(0).max(3600),
+    aiLimit: z.number().int().min(-1).max(5000),
+    disableCrashReporter: z.boolean().optional(),
+    disableServerShutdown: z.boolean().optional(),
+    slotReservationTimeout: z.number().int().min(0).max(600),
+    disableAI: z.boolean().optional(),
+    joinQueue: z.object({ maxSize: z.number().int().min(0).max(10000) }),
+    disableNavmeshStreaming: z.array(z.string()).optional(),
+  }),
+});
