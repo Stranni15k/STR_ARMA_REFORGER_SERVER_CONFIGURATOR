@@ -409,8 +409,8 @@
 
 .section-launcher { display:flex; flex-direction:column; height:100%; }
 .section-launcher .launcher-buttons { flex: 0 0 auto; }
-.section-launcher .section-inline-body { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; }
-.section-launcher .section-inline-body > div { max-height: 100%; }
+.section-launcher .section-inline-body { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; min-height: 0; }
+.section-launcher .section-content { padding: .75rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.01); }
 
 
 .mods-list { overflow-y: auto; max-height: calc(70vh - 220px); padding-right: .25rem; }

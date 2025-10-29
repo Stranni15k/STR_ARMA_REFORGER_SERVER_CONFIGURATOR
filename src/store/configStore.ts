@@ -189,7 +189,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     const res = zServerConfig.safeParse(parsed);
     if (!res.success) {
       console.error("Validation error:", res.error.issues);
-      alert("Конфиг не прошёл валидацию: " + res.error.issues[0].message);
+      alert("Config validation failed: " + res.error.issues[0].message);
       return;
     }
     
@@ -206,7 +206,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
   exportJson: () => {
     const res = zServerConfig.safeParse(get().config);
     if (!res.success) {
-      alert("Экспорт невозможен: " + res.error.issues[0].message);
+      alert("Export failed: " + res.error.issues[0].message);
       return null;
     }
     return JSON.stringify(res.data, null, 2);
@@ -292,7 +292,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
       set({ 
         searchResults: [], 
         isSearching: false,
-        searchError: error instanceof Error ? error.message : 'Ошибка поиска модов'
+        searchError: error instanceof Error ? error.message : 'Mod search error'
       });
     }
   },
@@ -314,7 +314,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
         set((s) => updateModsAndConfig(s.config, [...s.enabledMods, ...newMods]));
       }
     } catch (error) {
-      console.warn('Ошибка при получении зависимостей:', error);
+      console.warn('Error fetching dependencies:', error);
     }
   },
   getModDependencies: async (modId: string, modName: string): Promise<ModDependency[]> => {
@@ -337,7 +337,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
       const data = await response.json();
       return data.dependencies || [];
     } catch (error) {
-      console.error('Ошибка при получении зависимостей:', error);
+      console.error('Error fetching dependencies:', error);
       return [];
     }
   },

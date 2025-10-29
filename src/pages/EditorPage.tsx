@@ -11,6 +11,8 @@ export default function EditorPage() {
         <div className="button-group">
           <ImportButton />
           <ExportButton />
+        </div>
+        <div className="button-group">
           <ResetButton />
         </div>
       </div>

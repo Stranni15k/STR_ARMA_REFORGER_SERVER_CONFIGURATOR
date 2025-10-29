@@ -35,36 +35,22 @@ export default function SectionLauncher({ className = "" }: { className?: string
 
   const active = SECTION_MAP.find((s) => s.key === activeKey);
 
-  const left = SECTION_MAP.slice(0, 4);
-  const right = SECTION_MAP.slice(4, 7);
-
   return (
     <div className={`section-launcher ${className}`}>
-      <div className="launcher-buttons d-flex flex-column flex-md-row gap-3 mb-3">
-        <div className="d-flex flex-column gap-2" style={{ flex: 1 }}>
-          {left.map((s) => (
+      <div className="launcher-buttons row g-2 mb-3">
+        {SECTION_MAP.map((s) => (
+          <div key={s.key} className="col-6 col-md-4 col-lg-3">
             <button
-              key={s.key}
-              className={`btn btn-outline-light text-start ${activeKey === s.key ? "active" : ""}`}
+              className={`btn btn-sm w-100 ${activeKey === s.key ? "btn-primary" : "btn-outline-secondary"}`}
               onClick={() => toggle(s.key)}
             >
               {s.label}
             </button>
-          ))}
-        </div>
-
-        <div className="d-flex flex-column gap-2" style={{ flex: 1 }}>
-          {right.map((s) => (
-            <button
-              key={s.key}
-              className={`btn btn-outline-light text-start ${activeKey === s.key ? "active" : ""}`}
-              onClick={() => toggle(s.key)}
-            >
-              {s.label}
-            </button>
-          ))}
+          </div>
+        ))}
+        <div className="col-6 col-md-4 col-lg-3">
           <button
-            className="btn btn-outline-primary text-start"
+            className="btn btn-sm btn-outline-primary w-100"
             onClick={() => setIsModsModalOpen(true)}
           >
             Mods
@@ -73,9 +59,9 @@ export default function SectionLauncher({ className = "" }: { className?: string
       </div>
 
       <div className="section-inline-body">
-        <div>
+        <div className="section-content">
           <div className="mb-2"><strong>{active?.label}</strong></div>
-          <div>{active?.component}</div>
+          {active?.component}
         </div>
       </div>
       
