@@ -1,9 +1,14 @@
 import { useConfigStore } from "../store/configStore";
+import { useDebouncedArrayInput } from "../hooks/useDebouncedArrayInput";
 
 export default function Operating() {
   const { config, update, setNavmeshToggle } = useConfigStore();
   const o = config.operating;
   const navmeshEnabled = o.disableNavmeshStreaming != null;
+  
+  const navmesh = useDebouncedArrayInput(o.disableNavmeshStreaming, (values) => 
+    update("operating.disableNavmeshStreaming", values)
+  );
 
   return (
     <div className="fieldset-content">
@@ -65,9 +70,12 @@ export default function Operating() {
         {navmeshEnabled && (
           <div className="field-group">
             <label className="field-label">List (comma separated)</label>
-            <input className="form-control" value={(o.disableNavmeshStreaming ?? []).join(",")}
-                   onChange={e=>update("operating.disableNavmeshStreaming",
-                                       e.target.value.split(",").map(s=>s.trim()).filter(Boolean))} />
+            <input 
+              className="form-control" 
+              value={navmesh.input}
+              onChange={e => navmesh.handleChange(e.target.value)}
+              placeholder="Enter values separated by commas"
+            />
           </div>
         )}
     </div>

@@ -1,11 +1,11 @@
-import React from "react";
+import type { ReactNode } from "react";
 
 type PanelProps = {
-  title?: React.ReactNode;
+  title?: ReactNode;
   elevated?: boolean;
-  right?: React.ReactNode;
+  right?: ReactNode;
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 export default function Panel({ title, elevated, right, className = "", children }: PanelProps) {

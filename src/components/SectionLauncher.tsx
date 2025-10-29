@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Network from "../sections/Network";
 import A2S from "../sections/A2S";
 import Rcon from "../sections/Rcon";

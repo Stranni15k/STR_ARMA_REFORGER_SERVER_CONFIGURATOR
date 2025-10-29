@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useConfigStore } from "../store/configStore";
 
 interface ModsModalProps {
@@ -12,7 +12,7 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
     searchResults, 
     isSearching, 
     searchError, 
-    moveMod, 
+    removeMod, 
     searchMods, 
     addModFromSearch 
   } = useConfigStore();
@@ -152,7 +152,7 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
                     <div className="mod-card-footer">
                       <button 
                         className="btn btn-sm btn-danger w-100"
-                        onClick={() => moveMod(mod, "enabled")}
+                        onClick={() => removeMod(mod)}
                       >
                         Remove
                       </button>

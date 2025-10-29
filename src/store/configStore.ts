@@ -7,7 +7,7 @@ import { supportedPlatforms } from "../utils/args";
 
 const STORAGE_KEY = "arfc:state";
 
-const loadFromLocalStorage = (): { config: ServerConfig; enabledMods: Mod[]; availableMods: Mod[]; keyOrder?: string[]; originalKeyPositions?: Record<string, number> } | null => {
+const loadFromLocalStorage = (): { config: ServerConfig; enabledMods: Mod[]; keyOrder?: string[]; originalKeyPositions?: Record<string, number> } | null => {
   try {
     if (typeof window === "undefined" || !window.localStorage) return null;
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -26,7 +26,6 @@ const loadFromLocalStorage = (): { config: ServerConfig; enabledMods: Mod[]; ava
     return {
       config: res.data,
       enabledMods: Array.isArray(parsed.enabledMods) ? parsed.enabledMods : [],
-      availableMods: Array.isArray(parsed.availableMods) ? parsed.availableMods : [],
       keyOrder,
       originalKeyPositions,
     };
@@ -53,7 +52,6 @@ interface ModDependency {
 
 interface ConfigState {
   config: ServerConfig;
-  availableMods: Mod[];
   enabledMods: Mod[];
   searchResults: ModSearchResult[];
   isSearching: boolean;
@@ -65,9 +63,8 @@ interface ConfigState {
   update: (path: string, value: any) => void;
   importJson: (json: string) => void;
   exportJson: () => string | null;
-  moveMod: (mod: Mod, from: "available" | "enabled") => void;
+  removeMod: (mod: Mod) => void;
   importModsList: (mods: Mod[]) => void;
-  alphabetiseMods: () => void;
   setNavmeshToggle: (enabled: boolean) => void;
   searchMods: (query: string) => Promise<void>;
   addModFromSearch: (searchResult: ModSearchResult) => Promise<void>;
@@ -79,7 +76,6 @@ const _persisted = loadFromLocalStorage();
 
 export const useConfigStore = create<ConfigState>((set, get) => ({
   config: _persisted?.config ?? DEFAULT_CONFIG,
-  availableMods: _persisted?.availableMods ?? [],
   enabledMods: _persisted?.enabledMods ?? [],
   keyOrder: _persisted?.keyOrder ?? Object.keys(_persisted?.config ?? DEFAULT_CONFIG),
   originalKeyPositions:
@@ -188,7 +184,6 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     set({
       config: res.data,
       enabledMods: enabled,
-      availableMods: [],
       keyOrder: topKeys,
       originalKeyPositions,
     });
@@ -201,16 +196,11 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     }
     return JSON.stringify(res.data, null, 2);
   },
-  moveMod: (mod, from) =>
+  removeMod: (mod) =>
     set((s) => {
-      const src = from === "available" ? s.availableMods : s.enabledMods;
-      const dst = from === "available" ? s.enabledMods : s.availableMods;
-      const nextSrc = src.filter(m => m.modId !== mod.modId);
-      const nextDst = [...dst, mod];
-      const nextEnabled = from === "available" ? nextDst : nextSrc;
+      const nextEnabled = s.enabledMods.filter(m => m.modId !== mod.modId);
       return {
-        availableMods: from === "available" ? nextSrc : nextDst,
-        enabledMods: from === "available" ? nextDst : nextSrc,
+        enabledMods: nextEnabled,
         config: {
           ...s.config,
           game: { ...s.config.game, mods: nextEnabled },
@@ -221,19 +211,10 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     set((s) => {
       return {
         enabledMods: mods,
-        availableMods: s.availableMods.filter(m => !mods.some(x => x.modId === m.modId)),
         config: {
           ...s.config,
           game: { ...s.config.game, mods },
         },
-      };
-    }),
-  alphabetiseMods: () =>
-    set((s) => {
-      const byName = (a: Mod, b: Mod) => a.name.localeCompare(b.name);
-      return {
-        availableMods: [...s.availableMods].sort(byName),
-        enabledMods: [...s.enabledMods].sort(byName),
       };
     }),
   setNavmeshToggle: (enabled) =>
@@ -437,7 +418,6 @@ try {
         JSON.stringify({
           config: state.config,
           enabledMods: state.enabledMods,
-          availableMods: state.availableMods,
           keyOrder: state.keyOrder,
           originalKeyPositions: state.originalKeyPositions,
         })

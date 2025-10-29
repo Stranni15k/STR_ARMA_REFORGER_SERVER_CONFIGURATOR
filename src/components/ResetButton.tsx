@@ -7,7 +7,6 @@ export default function ResetButton() {
     <button className="btn btn-danger btn-sm" onClick={() => setConfig({ 
       config: DEFAULT_CONFIG,
       enabledMods: [],
-      availableMods: [],
       searchResults: []
     })}>
       Reset

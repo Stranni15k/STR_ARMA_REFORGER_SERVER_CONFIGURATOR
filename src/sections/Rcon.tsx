@@ -1,9 +1,13 @@
 import { useConfigStore } from "../store/configStore";
+import { useDebouncedArrayInput } from "../hooks/useDebouncedArrayInput";
 
 export default function Rcon() {
   const { config, update, toggleRconEnabled } = useConfigStore();
   const enabled = !!config.rcon;
   const rcon = config.rcon ?? { address:"", port:0, password:"", maxClients:10, permission:"admin" };
+  
+  const whitelist = useDebouncedArrayInput(rcon.whitelist, (values) => update("rcon.whitelist", values));
+  const blacklist = useDebouncedArrayInput(rcon.blacklist, (values) => update("rcon.blacklist", values));
 
   return (
     <div className="fieldset-content">
@@ -48,11 +52,9 @@ export default function Rcon() {
               <label className="field-label">Whitelist</label>
               <input 
                 className="form-control" 
-                value={rcon.whitelist?.join(", ") || ""}
-                onChange={e => {
-                  const values = e.target.value === "" ? [] : e.target.value.split(/[,\s]+/).filter(Boolean);
-                  update("rcon.whitelist", values);
-                }} 
+                value={whitelist.input}
+                onChange={e => whitelist.handleChange(e.target.value)}
+                placeholder="Enter IPs separated by commas"
               />
             </div>
 
@@ -60,11 +62,9 @@ export default function Rcon() {
               <label className="field-label">Blacklist</label>
               <input 
                 className="form-control" 
-                value={rcon.blacklist?.join(", ") || ""}
-                onChange={e => {
-                  const values = e.target.value === "" ? [] : e.target.value.split(/[,\s]+/).filter(Boolean);
-                  update("rcon.blacklist", values);
-                }}
+                value={blacklist.input}
+                onChange={e => blacklist.handleChange(e.target.value)}
+                placeholder="Enter IPs separated by commas"
               />
             </div>
           </>

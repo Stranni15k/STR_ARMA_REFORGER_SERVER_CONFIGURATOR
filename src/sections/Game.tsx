@@ -1,9 +1,12 @@
 import { useConfigStore } from "../store/configStore";
+import { useDebouncedArrayInput } from "../hooks/useDebouncedArrayInput";
 
 export default function Game() {
   const { config, update, toggleAdminsEnabled } = useConfigStore();
   const g = config.game;
   const adminsEnabled = !!g.admins;
+  
+  const admins = useDebouncedArrayInput(g.admins, (values) => update("game.admins", values));
   return (
     <div className="fieldset-content">
         <div className="field-group">
@@ -52,11 +55,8 @@ export default function Game() {
             <label className="field-label">Admins (SteamIDs/XboxIDs)</label>
             <input 
               className="form-control" 
-              value={g.admins?.join(", ") || ""}
-              onChange={e => {
-                const values = e.target.value === "" ? [] : e.target.value.split(/[,\s]+/).filter(Boolean);
-                update("game.admins", values);
-              }}
+              value={admins.input}
+              onChange={e => admins.handleChange(e.target.value)}
               placeholder="Enter IDs separated by commas"
             />
           </div>

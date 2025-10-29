@@ -1,4 +1,4 @@
-import React from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./styles/dark-bootstrap.css";
@@ -24,5 +24,5 @@ window.addEventListener("keydown", (e) => {
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode><App/></React.StrictMode>
+  <StrictMode><App/></StrictMode>
 );
