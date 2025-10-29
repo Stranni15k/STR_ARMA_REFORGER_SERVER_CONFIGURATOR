@@ -106,6 +106,11 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
               <div className="mods-grid">
                 {searchResults.map((result) => (
                   <div key={result.modId} className="mod-card">
+                    {result.image && (
+                      <div className="mod-card-image">
+                        <img src={result.image} alt={result.modName} />
+                      </div>
+                    )}
                     <div className="mod-card-body">
                       <div className="mod-name">{result.modName}</div>
                       <div className="mod-id">ID: {result.modId}</div>

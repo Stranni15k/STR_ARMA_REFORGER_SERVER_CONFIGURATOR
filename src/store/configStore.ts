@@ -41,6 +41,8 @@ interface ModSearchResult {
   modId: string;
   modName: string;
   size: string;
+  image: string;
+  url: string;
 }
 
 interface ModDependency {
@@ -168,7 +170,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
         parsed.rcon.maxClients = 10;
       }
       if (parsed.rcon.permission && 
-          !["admin", "moderator", "observer"].includes(parsed.rcon.permission)) {
+          !["admin", "monitor"].includes(parsed.rcon.permission)) {
         parsed.rcon.permission = "admin";
       }
     }
@@ -321,7 +323,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
   addModFromSearch: async (searchResult: ModSearchResult) => {
     const mod: Mod = {
       modId: searchResult.modId,
-      name: searchResult.modName,
+      name: searchResult.modName
     };
     
     set((s) => {
@@ -353,7 +355,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
           if (!isAlreadyAdded) {
             newMods.push({
               modId: dep.modId,
-              name: dep.modName,
+              name: dep.modName
             });
           }
         });

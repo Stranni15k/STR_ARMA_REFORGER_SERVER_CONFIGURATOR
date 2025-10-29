@@ -49,9 +49,16 @@ export default function Game() {
 
         {adminsEnabled && (
           <div className="field-group">
-            <label className="field-label">Admins (SteamIDs/XboxIDs, через запятую)</label>
-            <input className="form-control" value={g.admins?.join(",") || ""}
-                   onChange={e=>update("game.admins", e.target.value.split(",").map(s=>s.trim()).filter(Boolean))} />
+            <label className="field-label">Admins (SteamIDs/XboxIDs)</label>
+            <input 
+              className="form-control" 
+              value={g.admins?.join(", ") || ""}
+              onChange={e => {
+                const values = e.target.value === "" ? [] : e.target.value.split(/[,\s]+/).filter(Boolean);
+                update("game.admins", values);
+              }}
+              placeholder="Enter IDs separated by commas"
+            />
           </div>
         )}
 

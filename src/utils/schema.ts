@@ -16,7 +16,7 @@ export const zServerConfig = z.object({
     maxClients: z.number().int().min(1).max(1000),
     whitelist: z.array(z.string()).optional(),
     blacklist: z.array(z.string()).optional(),
-    permission: z.enum(["admin", "moderator", "observer"]).optional(),
+    permission: z.enum(["admin", "monitor"]).optional(),
   }).optional(),
   game: z.object({
     name: z.string(),

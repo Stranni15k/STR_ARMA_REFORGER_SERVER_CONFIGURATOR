@@ -1,7 +1,6 @@
 export type RconPermission =
   | "admin"
-  | "moderator"
-  | "observer";
+  | "monitor";
 
 export interface Rcon {
   address: string;

@@ -8,9 +8,9 @@ export const DEFAULT_CONFIG: ServerConfig = {
   a2s: { address: "0.0.0.0", port: 17777 },
   rcon: {
     address: "127.0.0.1",
-    port: 3030,
+    port: 19999,
     password: "",
-    maxClients: 10,
+    maxClients: 16,
     whitelist: [],
     blacklist: [],
     permission: "admin",

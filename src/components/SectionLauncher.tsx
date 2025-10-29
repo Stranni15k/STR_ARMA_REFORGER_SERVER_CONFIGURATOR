@@ -28,10 +28,10 @@ const SECTION_MAP: { key: SectionKey; label: string; component: React.ReactNode 
 ];
 
 export default function SectionLauncher({ className = "" }: { className?: string }) {
-  const [activeKey, setActiveKey] = useState<SectionKey | null>(null);
+  const [activeKey, setActiveKey] = useState<SectionKey>("network");
   const [isModsModalOpen, setIsModsModalOpen] = useState(false);
 
-  const toggle = (key: SectionKey) => setActiveKey((k) => (k === key ? null : key));
+  const toggle = (key: SectionKey) => setActiveKey(key); 
 
   const active = SECTION_MAP.find((s) => s.key === activeKey);
 
@@ -73,12 +73,10 @@ export default function SectionLauncher({ className = "" }: { className?: string
       </div>
 
       <div className="section-inline-body">
-        {active ? (
-          <div>
-            <div className="mb-2"><strong>{active.label}</strong></div>
-            <div>{active.component}</div>
-          </div>
-        ) : null}
+        <div>
+          <div className="mb-2"><strong>{active?.label}</strong></div>
+          <div>{active?.component}</div>
+        </div>
       </div>
       
       <ModsModal 

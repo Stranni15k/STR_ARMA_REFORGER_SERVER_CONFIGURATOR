@@ -4,7 +4,12 @@ import { useConfigStore } from "../store/configStore";
 export default function ResetButton() {
   const setConfig = useConfigStore.setState;
   return (
-    <button className="btn btn-danger btn-sm" onClick={() => setConfig({ config: DEFAULT_CONFIG })}>
+    <button className="btn btn-danger btn-sm" onClick={() => setConfig({ 
+      config: DEFAULT_CONFIG,
+      enabledMods: [],
+      availableMods: [],
+      searchResults: []
+    })}>
       Reset
     </button>
   );

@@ -40,9 +40,32 @@ export default function Rcon() {
               <select className="form-select" value={rcon.permission ?? "admin"}
                       onChange={e=>update("rcon.permission", e.target.value)}>
                 <option value="admin">admin</option>
-                <option value="moderator">moderator</option>
-                <option value="observer">observer</option>
+                <option value="monitor">monitor</option>
               </select>
+            </div>
+
+            <div className="field-group">
+              <label className="field-label">Whitelist</label>
+              <input 
+                className="form-control" 
+                value={rcon.whitelist?.join(", ") || ""}
+                onChange={e => {
+                  const values = e.target.value === "" ? [] : e.target.value.split(/[,\s]+/).filter(Boolean);
+                  update("rcon.whitelist", values);
+                }} 
+              />
+            </div>
+
+            <div className="field-group">
+              <label className="field-label">Blacklist</label>
+              <input 
+                className="form-control" 
+                value={rcon.blacklist?.join(", ") || ""}
+                onChange={e => {
+                  const values = e.target.value === "" ? [] : e.target.value.split(/[,\s]+/).filter(Boolean);
+                  update("rcon.blacklist", values);
+                }}
+              />
             </div>
           </>
         )}
