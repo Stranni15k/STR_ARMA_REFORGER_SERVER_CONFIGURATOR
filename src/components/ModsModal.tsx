@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useConfigStore } from "../store/configStore";
+import { getModDisplayName } from "../utils/modConfigs";
 
 interface ModsModalProps {
   isOpen: boolean;
@@ -146,7 +147,14 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
                 {enabledMods.map((mod) => (
                   <div key={mod.modId} className="mod-card">
                     <div className="mod-card-body">
-                      <div className="mod-name">{mod.name}</div>
+                      <div className="mod-name">
+                        {mod.name}
+                        {getModDisplayName(mod.modId) && (
+                          <span className="badge bg-success ms-2" title="Auto-configured missionHeader settings">
+                            Auto-config
+                          </span>
+                        )}
+                      </div>
                       <div className="mod-id">ID: {mod.modId}</div>
                     </div>
                     <div className="mod-card-footer">

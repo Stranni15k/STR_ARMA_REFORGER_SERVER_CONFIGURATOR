@@ -1,0 +1,40 @@
+{
+  "mods": [
+    {
+      "modIdPrefix": "60C4C12DAE90727B",
+      "displayName": "ACE Medical",
+      "missionHeaderFields": {
+        "m_ACE_Settings": {
+          "m_ACE_Medical_Settings": {
+            "m_fSecondChanceRegenScale": {
+              "type": "number",
+              "default": 0.025,
+              "label": "Second Chance Regen Scale",
+              "min": 0,
+              "max": 1,
+              "step": 0.001
+            },
+            "m_bSecondChanceOnHeadEnabled": {
+              "type": "boolean",
+              "default": 1,
+              "label": "Second Chance On Head Enabled"
+            },
+            "m_bHealSupplyUsageEnabled": {
+              "type": "boolean",
+              "default": 0,
+              "label": "Heal Supply Usage Enabled"
+            },
+            "m_fMedicalKitMaxHealScaled": {
+              "type": "number",
+              "default": 1.0,
+              "label": "Medical Kit Max Heal Scaled",
+              "min": 0,
+              "max": 2,
+              "step": 0.1
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -4,6 +4,8 @@ import { DEFAULT_CONFIG } from "../utils/defaults";
 import { setByPath } from "../utils/pathSet";
 import type { ServerConfig, Mod } from "../types/serverConfig";
 import { supportedPlatforms } from "../utils/args";
+import { mergeMissionHeaderWithModConfigs } from "../utils/modConfigs";
+import { updateModsAndConfig } from "../utils/storeHelpers";
 
 const STORAGE_KEY = "arfc:state";
 
@@ -171,6 +173,19 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
       }
     }
     
+    const modIds = (parsed.game.mods || []).map((m: any) => m.modId);
+    const updatedMissionHeader = mergeMissionHeaderWithModConfigs(
+      parsed.game.gameProperties?.missionHeader,
+      modIds
+    );
+    
+    if (updatedMissionHeader) {
+      if (!parsed.game.gameProperties) {
+        parsed.game.gameProperties = DEFAULT_CONFIG.game.gameProperties;
+      }
+      parsed.game.gameProperties.missionHeader = updatedMissionHeader;
+    }
+    
     const res = zServerConfig.safeParse(parsed);
     if (!res.success) {
       console.error("Validation error:", res.error.issues);
@@ -178,7 +193,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
       return;
     }
     
-    const enabled = res.data.game.mods;
+    const enabled = res.data.game.mods || [];
     const topKeys = Object.keys(parsed);
     const originalKeyPositions = Object.fromEntries(topKeys.map((k, i) => [k, i]));
     set({
@@ -196,27 +211,8 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     }
     return JSON.stringify(res.data, null, 2);
   },
-  removeMod: (mod) =>
-    set((s) => {
-      const nextEnabled = s.enabledMods.filter(m => m.modId !== mod.modId);
-      return {
-        enabledMods: nextEnabled,
-        config: {
-          ...s.config,
-          game: { ...s.config.game, mods: nextEnabled },
-        },
-      };
-    }),
-  importModsList: (mods) =>
-    set((s) => {
-      return {
-        enabledMods: mods,
-        config: {
-          ...s.config,
-          game: { ...s.config.game, mods },
-        },
-      };
-    }),
+  removeMod: (mod) => set((s) => updateModsAndConfig(s.config, s.enabledMods.filter(m => m.modId !== mod.modId))),
+  importModsList: (mods) => set((s) => updateModsAndConfig(s.config, mods)),
   setNavmeshToggle: (enabled) =>
     set((s) => {
       if (enabled) {
@@ -249,11 +245,10 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
               ...s.config.game,
               gameProperties: {
                 ...s.config.game.gameProperties,
-                missionHeader: s.config.game.gameProperties.missionHeader ?? {
+                missionHeader: {
                   m_iPlayerCount: 40,
                   m_eEditableGameFlags: 6,
-                  m_eDefaultGameFlags: 6,
-                  other: "values"
+                  m_eDefaultGameFlags: 6
                 },
               },
             },
@@ -302,60 +297,21 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     }
   },
   addModFromSearch: async (searchResult: ModSearchResult) => {
-    const mod: Mod = {
-      modId: searchResult.modId,
-      name: searchResult.modName
-    };
+    const mod: Mod = { modId: searchResult.modId, name: searchResult.modName };
     
     set((s) => {
-      const isAlreadyAdded = s.enabledMods.some(m => m.modId === mod.modId);
-      if (isAlreadyAdded) {
-        return s;
-      }
-      
-      const nextEnabledMods = [...s.enabledMods, mod];
-      return {
-        enabledMods: nextEnabledMods,
-        config: {
-          ...s.config,
-          game: { 
-            ...s.config.game, 
-            mods: nextEnabledMods 
-          },
-        },
-      };
+      if (s.enabledMods.some(m => m.modId === mod.modId)) return s;
+      return updateModsAndConfig(s.config, [...s.enabledMods, mod]);
     });
 
     try {
       const dependencies = await get().getModDependencies(searchResult.modId, searchResult.modName);
-      if (dependencies.length > 0) {
-        const newMods: Mod[] = [];
-        
-        dependencies.forEach(dep => {
-          const isAlreadyAdded = get().enabledMods.some(m => m.modId === dep.modId);
-          if (!isAlreadyAdded) {
-            newMods.push({
-              modId: dep.modId,
-              name: dep.modName
-            });
-          }
-        });
+      const newMods = dependencies
+        .filter(dep => !get().enabledMods.some(m => m.modId === dep.modId))
+        .map(dep => ({ modId: dep.modId, name: dep.modName }));
 
-        if (newMods.length > 0) {
-          set((s) => {
-            const nextEnabledMods = [...s.enabledMods, ...newMods];
-            return {
-              enabledMods: nextEnabledMods,
-              config: {
-                ...s.config,
-                game: { 
-                  ...s.config.game, 
-                  mods: nextEnabledMods 
-                },
-              },
-            };
-          });
-        }
+      if (newMods.length > 0) {
+        set((s) => updateModsAndConfig(s.config, [...s.enabledMods, ...newMods]));
       }
     } catch (error) {
       console.warn('Ошибка при получении зависимостей:', error);

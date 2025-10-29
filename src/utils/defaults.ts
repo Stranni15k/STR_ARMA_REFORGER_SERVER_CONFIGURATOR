@@ -39,8 +39,7 @@ export const DEFAULT_CONFIG: ServerConfig = {
       missionHeader: {
         m_iPlayerCount: 40,
         m_eEditableGameFlags: 6,
-        m_eDefaultGameFlags: 6,
-        other: "values"
+        m_eDefaultGameFlags: 6
       },
     },
   },
