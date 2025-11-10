@@ -7,7 +7,7 @@ export default function Mods() {
     searchResults, 
     isSearching, 
     searchError, 
-    moveMod, 
+    removeMod, 
     searchMods, 
     addModFromSearch 
   } = useConfigStore();
@@ -108,7 +108,7 @@ export default function Mods() {
                 <div className="mod-card-footer">
                   <button 
                     className="btn btn-sm btn-danger w-100"
-                    onClick={() => moveMod(mod, "enabled")}
+                    onClick={() => removeMod(mod)}
                   >
                     Remove
                   </button>

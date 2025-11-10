@@ -1,4 +1,5 @@
 import ImportButton from "../components/ImportButton";
+import ImportModsButton from "../components/ImportModsButton";
 import ExportButton from "../components/ExportButton";
 import ResetButton from "../components/ResetButton";
 import SectionLauncher from "../components/SectionLauncher";
@@ -10,6 +11,7 @@ export default function EditorPage() {
       <div className="app-header">
         <div className="button-group">
           <ImportButton />
+          <ImportModsButton />
           <ExportButton />
         </div>
         <div className="button-group">

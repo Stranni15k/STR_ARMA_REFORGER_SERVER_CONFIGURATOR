@@ -58,6 +58,8 @@ interface ConfigState {
   searchResults: ModSearchResult[];
   isSearching: boolean;
   searchError: string | null;
+  isImportingBatch: boolean;
+  batchImportError: string | null;
   keyOrder: string[];
   originalKeyPositions: Record<string, number>;
   toggleRconEnabled: (enabled: boolean) => void;
@@ -70,6 +72,7 @@ interface ConfigState {
   setNavmeshToggle: (enabled: boolean) => void;
   searchMods: (query: string) => Promise<void>;
   addModFromSearch: (searchResult: ModSearchResult) => Promise<void>;
+  importModsBatch: (modIds: string[]) => Promise<void>;
   getModDependencies: (modId: string, modName: string) => Promise<ModDependency[]>;
   toggleAdminsEnabled: (enabled: boolean) => void;
 }
@@ -87,6 +90,8 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
   searchResults: [],
   isSearching: false,
   searchError: null,
+  isImportingBatch: false,
+  batchImportError: null,
   toggleRconEnabled: (enabled) =>
     set((s) => {
       const rebuild = (cfg: any, keyOrder: string[]) => {
@@ -153,6 +158,13 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     }
     if (!parsed.game.mods) {
       parsed.game.mods = [];
+    } else if (Array.isArray(parsed.game.mods)) {
+      parsed.game.mods = parsed.game.mods.map((m: any) => ({
+        modId: m.modId,
+        name: m.name,
+        version: typeof m.version === "string" ? m.version : "",
+        required: typeof m.required === "boolean" ? m.required : false
+      }));
     }
     
     if (parsed.game.gameProperties) {
@@ -297,7 +309,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     }
   },
   addModFromSearch: async (searchResult: ModSearchResult) => {
-    const mod: Mod = { modId: searchResult.modId, name: searchResult.modName };
+    const mod: Mod = { modId: searchResult.modId, name: searchResult.modName, version: "", required: false };
     
     set((s) => {
       if (s.enabledMods.some(m => m.modId === mod.modId)) return s;
@@ -308,7 +320,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
       const dependencies = await get().getModDependencies(searchResult.modId, searchResult.modName);
       const newMods = dependencies
         .filter(dep => !get().enabledMods.some(m => m.modId === dep.modId))
-        .map(dep => ({ modId: dep.modId, name: dep.modName }));
+        .map(dep => ({ modId: dep.modId, name: dep.modName, version: "", required: false }));
 
       if (newMods.length > 0) {
         set((s) => updateModsAndConfig(s.config, [...s.enabledMods, ...newMods]));
@@ -339,6 +351,84 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     } catch (error) {
       console.error('Error fetching dependencies:', error);
       return [];
+    }
+  },
+  importModsBatch: async (modIds: string[]) => {
+    if (!modIds || modIds.length === 0) {
+      set({ batchImportError: "No mod IDs provided" });
+      return;
+    }
+
+    const validModIds = modIds
+      .map(id => id.trim())
+      .filter(id => id.length > 0);
+
+    if (validModIds.length === 0) {
+      set({ batchImportError: "No valid mod IDs provided" });
+      return;
+    }
+
+    set({ isImportingBatch: true, batchImportError: null });
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/mods', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mods: validModIds
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const results = await response.json();
+      
+      const successfulMods: Mod[] = [];
+      const errors: string[] = [];
+
+      for (const result of results) {
+        if (result.error) {
+          errors.push(`${result.modId}: ${result.error}`);
+        } else if (result.modId && result.modName) {
+          const existingMod = get().enabledMods.find(m => m.modId === result.modId);
+          if (!existingMod) {
+            successfulMods.push({
+              modId: result.modId,
+              name: result.modName,
+              version: "",
+              required: false
+            });
+          }
+        }
+      }
+
+      if (successfulMods.length > 0) {
+        set((s) => {
+          const newMods = [...s.enabledMods, ...successfulMods];
+          return updateModsAndConfig(s.config, newMods);
+        });
+      }
+
+      if (errors.length > 0) {
+        set({ 
+          isImportingBatch: false,
+          batchImportError: `Some mods failed to import:\n${errors.join('\n')}`
+        });
+      } else {
+        set({ 
+          isImportingBatch: false,
+          batchImportError: null
+        });
+      }
+    } catch (error) {
+      set({ 
+        isImportingBatch: false,
+        batchImportError: error instanceof Error ? error.message : 'Batch import error'
+      });
     }
   },
   toggleAdminsEnabled: (enabled) =>

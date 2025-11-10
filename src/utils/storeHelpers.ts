@@ -5,12 +5,20 @@ export const updateModsAndConfig = (
   config: ServerConfig,
   mods: Mod[]
 ) => ({
-  enabledMods: mods,
+  enabledMods: mods.map(m => ({
+    ...m,
+    version: m.version ?? "",
+    required: m.required ?? false
+  })),
   config: {
     ...config,
     game: {
       ...config.game,
-      mods,
+      mods: mods.map(m => ({
+        ...m,
+        version: m.version ?? "",
+        required: m.required ?? false
+      })),
       gameProperties: {
         ...config.game.gameProperties,
         missionHeader: mergeMissionHeaderWithModConfigs(

@@ -1,35 +1,427 @@
 {
   "mods": [
     {
-      "modIdPrefix": "60C4C12DAE90727B",
-      "displayName": "ACE Medical",
+      "modIdPrefix": "6586079789278413",
+      "displayName": "ACE Medical Core Dev",
       "missionHeaderFields": {
         "m_ACE_Settings": {
-          "m_ACE_Medical_Settings": {
-            "m_fSecondChanceRegenScale": {
+          "m_ACE_Medical_Core": {
+            "m_fDefaultResilienceRegenScale": {
               "type": "number",
-              "default": 0.025,
-              "label": "Second Chance Regen Scale",
+              "default": 0.3,
+              "label": "Default Resilience Regen Scale",
               "min": 0,
               "max": 1,
-              "step": 0.001
+              "step": 0.1
             },
-            "m_bSecondChanceOnHeadEnabled": {
+            "m_fMinHealthScaledForEpinephrine": {
+              "type": "number",
+              "default": 0.33,
+              "label": "Min Health Scaled for Epinephrine",
+              "min": 0,
+              "max": 1,
+              "step": 0.01
+            },
+            "m_bBleedOutForPlayersEnabled": {
               "type": "boolean",
               "default": 1,
-              "label": "Second Chance On Head Enabled"
+              "label": "Bleed Out for Players Enabled"
+            },
+            "m_fBleedingRateScale": {
+              "type": "number",
+              "default": 1.0,
+              "label": "Bleeding Rate Scale",
+              "min": 0,
+              "max": 10,
+              "step": 0.1
+            },
+            "m_fMaxTotalBleedingRate": {
+              "type": "number",
+              "default": -1.0,
+              "label": "Max Total Bleeding Rate (-1 for unlimited)",
+              "min": -1,
+              "max": 100,
+              "step": 0.1
+            },
+            "m_fBloodRegenScale": {
+              "type": "number",
+              "default": 1.0,
+              "label": "Blood Regen Scale",
+              "min": 0,
+              "max": 10,
+              "step": 0.1
             },
             "m_bHealSupplyUsageEnabled": {
               "type": "boolean",
-              "default": 0,
+              "default": 1,
               "label": "Heal Supply Usage Enabled"
             },
             "m_fMedicalKitMaxHealScaled": {
               "type": "number",
-              "default": 1.0,
+              "default": 0.5,
               "label": "Medical Kit Max Heal Scaled",
               "min": 0,
               "max": 2,
+              "step": 0.1
+            },
+            "m_ePainScreenEffectType": {
+              "type": "number",
+              "default": 1,
+              "label": "Pain Screen Effect Type",
+              "min": 0,
+              "max": 3,
+              "step": 1
+            },
+            "m_fSecondChanceResilienceRegenScale": {
+              "type": "number",
+              "default": 0.0,
+              "label": "Second Chance Resilience Regen Scale",
+              "min": 0,
+              "max": 1,
+              "step": 0.1
+            },
+            "m_fDefaultSecondChance": {
+              "type": "number",
+              "default": 1.0,
+              "label": "Default Second Chance",
+              "min": 0,
+              "max": 1,
+              "step": 0.1
+            },
+            "m_fSecondChanceOnHead": {
+              "type": "number",
+              "default": 0.0,
+              "label": "Second Chance on Head",
+              "min": 0,
+              "max": 1,
+              "step": 0.1
+            },
+            "m_fSecondChanceOnChest": {
+              "type": "number",
+              "default": 1.0,
+              "label": "Second Chance on Chest",
+              "min": 0,
+              "max": 1,
+              "step": 0.1
+            },
+            "m_fSecondChanceOnAbdomen": {
+              "type": "number",
+              "default": 1.0,
+              "label": "Second Chance on Abdomen",
+              "min": 0,
+              "max": 1,
+              "step": 0.1
+            },
+            "m_bSecondChanceForFallDamageEnabled": {
+              "type": "boolean",
+              "default": 0,
+              "label": "Second Chance for Fall Damage Enabled"
+            },
+            "m_bSecondChanceForAIEnabled": {
+              "type": "boolean",
+              "default": 0,
+              "label": "Second Chance for AI Enabled"
+            }
+          }
+        }
+      }
+    },
+    {
+      "modIdPrefix": "65B343F799FB521B",
+      "displayName": "ACE Medical Hitzones",
+      "missionHeaderFields": {
+        "m_ACE_Settings": {
+          "m_ACE_Medical_Hitzones": {
+            "m_bOrganHitZonesEnabled": {
+              "type": "boolean",
+              "default": 1,
+              "label": "Organ Hit Zones Enabled"
+            },
+            "m_fSecondChanceOnHeart": {
+              "type": "number",
+              "default": 0.0,
+              "label": "Second Chance on Heart",
+              "min": 0,
+              "max": 1,
+              "step": 0.1
+            }
+          }
+        }
+      }
+    },
+    {
+      "modIdPrefix": "65AD7D4F994EA327",
+      "displayName": "ACE Medical Circulation",
+      "missionHeaderFields": {
+        "m_ACE_Settings": {
+          "m_ACE_Medical_Circulation": {
+            "m_fDefaultHeartRateBPM": {
+              "type": "number",
+              "default": 80.0,
+              "label": "Default Heart Rate (BPM)",
+              "min": 0,
+              "max": 200,
+              "step": 1
+            },
+            "m_fDefaultStrokeVolumeML": {
+              "type": "number",
+              "default": 95.0,
+              "label": "Default Stroke Volume (mL)",
+              "min": 0,
+              "max": 200,
+              "step": 1
+            },
+            "m_fDefaultMeanArterialPressureKPA": {
+              "type": "number",
+              "default": 12.443,
+              "label": "Default Mean Arterial Pressure (kPa)",
+              "min": 0,
+              "max": 30,
+              "step": 0.1
+            },
+            "m_fDefaultPulsePressureKPA": {
+              "type": "number",
+              "default": 5.3329,
+              "label": "Default Pulse Pressure (kPa)",
+              "min": 0,
+              "max": 30,
+              "step": 0.1
+            },
+            "m_UnstableThresholds": {
+              "m_fHeartRateLowBPM": {
+                "type": "number",
+                "default": 40.0,
+                "label": "Unstable: Low Heart Rate (BPM)",
+                "min": 0,
+                "max": 200,
+                "step": 1
+              },
+              "m_fHeartRateHighBPM": {
+                "type": "number",
+                "default": 220.0,
+                "label": "Unstable: High Heart Rate (BPM)",
+                "min": 0,
+                "max": 300,
+                "step": 1
+              },
+              "m_fMeanArterialPressureLowKPA": {
+                "type": "number",
+                "default": 7.11,
+                "label": "Unstable: Low Mean Arterial Pressure (kPa)",
+                "min": 0,
+                "max": 30,
+                "step": 0.1
+              },
+              "m_fMeanArterialPressureHighKPA": {
+                "type": "number",
+                "default": 29.5,
+                "label": "Unstable: High Mean Arterial Pressure (kPa)",
+                "min": 0,
+                "max": 50,
+                "step": 0.1
+              },
+              "m_fMaxHeartForMeanArterialPressureLowBPM": {
+                "type": "number",
+                "default": 80.0,
+                "label": "Unstable: Max Heart Rate for Low MAP (BPM)",
+                "min": 0,
+                "max": 200,
+                "step": 1
+              },
+              "m_eBloodState": {
+                "type": "number",
+                "default": 3,
+                "label": "Unstable: Blood State",
+                "min": 0,
+                "max": 10,
+                "step": 1
+              }
+            },
+            "m_CriticalThresholds": {
+              "m_fHeartRateLowBPM": {
+                "type": "number",
+                "default": 30.0,
+                "label": "Critical: Low Heart Rate (BPM)",
+                "min": 0,
+                "max": 200,
+                "step": 1
+              },
+              "m_fHeartRateHighBPM": {
+                "type": "number",
+                "default": 220.0,
+                "label": "Critical: High Heart Rate (BPM)",
+                "min": 0,
+                "max": 300,
+                "step": 1
+              },
+              "m_fMeanArterialPressureLowKPA": {
+                "type": "number",
+                "default": 5.21,
+                "label": "Critical: Low Mean Arterial Pressure (kPa)",
+                "min": 0,
+                "max": 30,
+                "step": 0.1
+              },
+              "m_fMeanArterialPressureHighKPA": {
+                "type": "number",
+                "default": 29.5,
+                "label": "Critical: High Mean Arterial Pressure (kPa)",
+                "min": 0,
+                "max": 50,
+                "step": 0.1
+              },
+              "m_fMaxHeartForMeanArterialPressureLowBPM": {
+                "type": "number",
+                "default": 40.0,
+                "label": "Critical: Max Heart Rate for Low MAP (BPM)",
+                "min": 0,
+                "max": 200,
+                "step": 1
+              },
+              "m_eBloodState": {
+                "type": "number",
+                "default": 4,
+                "label": "Critical: Blood State",
+                "min": 0,
+                "max": 10,
+                "step": 1
+              }
+            },
+            "m_CardiacArrestThresholds": {
+              "m_fHeartRateLowBPM": {
+                "type": "number",
+                "default": 20.0,
+                "label": "Cardiac Arrest: Low Heart Rate (BPM)",
+                "min": 0,
+                "max": 200,
+                "step": 1
+              },
+              "m_fHeartRateHighBPM": {
+                "type": "number",
+                "default": 220.0,
+                "label": "Cardiac Arrest: High Heart Rate (BPM)",
+                "min": 0,
+                "max": 300,
+                "step": 1
+              },
+              "m_fMeanArterialPressureLowKPA": {
+                "type": "number",
+                "default": 5.21,
+                "label": "Cardiac Arrest: Low Mean Arterial Pressure (kPa)",
+                "min": 0,
+                "max": 30,
+                "step": 0.1
+              },
+              "m_fMeanArterialPressureHighKPA": {
+                "type": "number",
+                "default": 29.5,
+                "label": "Cardiac Arrest: High Mean Arterial Pressure (kPa)",
+                "min": 0,
+                "max": 50,
+                "step": 0.1
+              },
+              "m_fMaxHeartForMeanArterialPressureLowBPM": {
+                "type": "number",
+                "default": 30.0,
+                "label": "Cardiac Arrest: Max Heart Rate for Low MAP (BPM)",
+                "min": 0,
+                "max": 200,
+                "step": 1
+              },
+              "m_eBloodState": {
+                "type": "number",
+                "default": 5,
+                "label": "Cardiac Arrest: Blood State",
+                "min": 0,
+                "max": 10,
+                "step": 1
+              }
+            },
+            "m_CardiacArrestDamageEffect": {
+              "m_fBrainDamageRate": {
+                "type": "number",
+                "default": 0.333,
+                "label": "Cardiac Arrest: Brain Damage Rate",
+                "min": 0,
+                "max": 1,
+                "step": 0.001
+              },
+              "m_fEffectStartDelayS": {
+                "type": "number",
+                "default": 10.0,
+                "label": "Cardiac Arrest: Effect Start Delay (s)",
+                "min": 0,
+                "max": 60,
+                "step": 0.1
+              }
+            },
+            "m_bCardiacArrestForAIEnabled": {
+              "type": "boolean",
+              "default": 0,
+              "label": "Cardiac Arrest for AI Enabled"
+            },
+            "m_fCPRStrokeVolumeScale": {
+              "type": "number",
+              "default": 0.23,
+              "label": "CPR Stroke Volume Scale",
+              "min": 0,
+              "max": 1,
+              "step": 0.01
+            },
+            "m_fCPRSuccessCheckTimeoutS": {
+              "type": "number",
+              "default": 22.0,
+              "label": "CPR Success Check Timeout (s)",
+              "min": 0,
+              "max": 60,
+              "step": 0.1
+            },
+            "m_fCPRSuccessChanceMin": {
+              "type": "number",
+              "default": 0.0,
+              "label": "CPR Success Chance Min",
+              "min": 0,
+              "max": 1,
+              "step": 0.01
+            },
+            "m_fCPRSuccessChanceMax": {
+              "type": "number",
+              "default": 0.4,
+              "label": "CPR Success Chance Max",
+              "min": 0,
+              "max": 1,
+              "step": 0.01
+            },
+            "m_fAmmoniumCarbonateSuccessChanceMin": {
+              "type": "number",
+              "default": 0.2,
+              "label": "Ammonium Carbonate Success Chance Min",
+              "min": 0,
+              "max": 1,
+              "step": 0.01
+            },
+            "m_fAmmoniumCarbonateSuccessChanceMax": {
+              "type": "number",
+              "default": 1.0,
+              "label": "Ammonium Carbonate Success Chance Max",
+              "min": 0,
+              "max": 1,
+              "step": 0.01
+            },
+            "m_fMaxRevivalResilienceRecoveryScale": {
+              "type": "number",
+              "default": 0.2,
+              "label": "Max Revival Resilience Recovery Scale",
+              "min": 0,
+              "max": 1,
+              "step": 0.01
+            },
+            "m_fCardiacArrestMaxTotalBleedingRate": {
+              "type": "number",
+              "default": 20.0,
+              "label": "Cardiac Arrest Max Total Bleeding Rate",
+              "min": 0,
+              "max": 100,
               "step": 0.1
             }
           }
