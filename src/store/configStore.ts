@@ -4,7 +4,7 @@ import { DEFAULT_CONFIG } from "../utils/defaults";
 import { setByPath } from "../utils/pathSet";
 import type { ServerConfig, Mod } from "../types/serverConfig";
 import { supportedPlatforms } from "../utils/args";
-import { mergeMissionHeaderWithModConfigs } from "../utils/modConfigs";
+import { mergeMissionHeaderWithModConfigs, findModConfig } from "../utils/modConfigs";
 import { updateModsAndConfig } from "../utils/storeHelpers";
 
 const STORAGE_KEY = "arfc:state";
@@ -74,6 +74,7 @@ interface ConfigState {
   addModFromSearch: (searchResult: ModSearchResult) => Promise<void>;
   importModsBatch: (modIds: string[]) => Promise<void>;
   getModDependencies: (modId: string, modName: string) => Promise<ModDependency[]>;
+  processModsWithDependencies: (mods: any[], existingModIds: Set<string>) => Promise<{ mods: Mod[]; errors: string[] }>;
   toggleAdminsEnabled: (enabled: boolean) => void;
 }
 
@@ -223,7 +224,53 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     }
     return JSON.stringify(res.data, null, 2);
   },
-  removeMod: (mod) => set((s) => updateModsAndConfig(s.config, s.enabledMods.filter(m => m.modId !== mod.modId))),
+  removeMod: (mod) => set((s) => {
+    const modConfig = findModConfig(mod.modId);
+    const updatedMods = s.enabledMods.filter(m => m.modId !== mod.modId);
+    
+    if (modConfig) {
+      const currentHeader = s.config.game.gameProperties?.missionHeader || {};
+      const defaultConfig = modConfig.getDefaultConfig();
+      
+      const newHeader = JSON.parse(JSON.stringify(currentHeader));
+      
+      const cleanConfig = (config: any, defaults: any) => {
+        for (const [key, value] of Object.entries(defaults)) {
+          if (value && typeof value === 'object' && !Array.isArray(value)) {
+            if (key in config) {
+              if (Object.keys(value).length === 0) {
+                delete config[key];
+              } else {
+                cleanConfig(config[key], value);
+                if (Object.keys(config[key]).length === 0) {
+                  delete config[key];
+                }
+              }
+            }
+          } else if (key in config && JSON.stringify(config[key]) === JSON.stringify(value)) {
+            delete config[key];
+          }
+        }
+      };
+      
+      cleanConfig(newHeader, defaultConfig);
+      
+      const newConfig = {
+        ...s.config,
+        game: {
+          ...s.config.game,
+          gameProperties: {
+            ...s.config.game.gameProperties,
+            missionHeader: newHeader
+          }
+        }
+      };
+      
+      return updateModsAndConfig(newConfig, updatedMods);
+    }
+    
+    return updateModsAndConfig(s.config, updatedMods);
+  }),
   importModsList: (mods) => set((s) => updateModsAndConfig(s.config, mods)),
   setNavmeshToggle: (enabled) =>
     set((s) => {
@@ -353,18 +400,81 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
       return [];
     }
   },
+  processModsWithDependencies: async (mods: any[], existingModIds: Set<string>): Promise<{ mods: Mod[]; errors: string[] }> => {
+    const successfulMods: Mod[] = [];
+    const errors: string[] = [];
+    const processedMods = new Set<string>(existingModIds);
+    const modsToProcess = [...mods];
+
+    while (modsToProcess.length > 0) {
+      const current = modsToProcess.shift()!;
+      const modId = current.modId;
+
+      if (processedMods.has(modId)) continue;
+
+      if (current.error) {
+        errors.push(`${modId}: ${current.error}`);
+        continue;
+      }
+
+      if (!current.modId || !current.modName) {
+        errors.push(`Invalid mod data for ${modId}`);
+        continue;
+      }
+
+      successfulMods.push({
+        modId: current.modId,
+        name: current.modName,
+        version: current.version || "",
+        required: current.required || false
+      });
+      processedMods.add(modId);
+
+      if (current.dependencies && Array.isArray(current.dependencies)) {
+        for (const dep of current.dependencies) {
+          if (!processedMods.has(dep.modId)) {
+            try {
+              const response = await fetch('http://127.0.0.1:5000/mods', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mods: [dep.modId] })
+              });
+
+              if (!response.ok) {
+                errors.push(`Failed to fetch dependency ${dep.modId} for ${modId}`);
+                continue;
+              }
+
+              const [depResult] = await response.json();
+              if (depResult.error) {
+                errors.push(`Dependency ${dep.modId} for ${modId}: ${depResult.error}`);
+              } else {
+                modsToProcess.unshift(depResult);
+              }
+            } catch (error) {
+              errors.push(`Error processing dependency ${dep.modId} for ${modId}: ${error}`);
+            }
+          }
+        }
+      }
+    }
+
+    return { mods: successfulMods, errors };
+  },
   importModsBatch: async (modIds: string[]) => {
-    if (!modIds || modIds.length === 0) {
-      set({ batchImportError: "No mod IDs provided" });
+    if (!modIds?.length) {
+      set({ batchImportError: "Не указаны ID модов для импорта" });
       return;
     }
 
-    const validModIds = modIds
-      .map(id => id.trim())
-      .filter(id => id.length > 0);
+    const validModIds = [...new Set(
+      modIds
+        .map(id => id.trim())
+        .filter(Boolean)
+    )];
 
-    if (validModIds.length === 0) {
-      set({ batchImportError: "No valid mod IDs provided" });
+    if (!validModIds.length) {
+      set({ batchImportError: "Нет валидных ID модов для импорта" });
       return;
     }
 
@@ -373,50 +483,40 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     try {
       const response = await fetch('http://127.0.0.1:5000/mods', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          mods: validModIds
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mods: validModIds })
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
       }
 
       const results = await response.json();
       
-      const successfulMods: Mod[] = [];
-      const errors: string[] = [];
+      const existingMods = get().enabledMods;
+      const existingModIds = new Set(existingMods.map(m => m.modId));
+      
+      const { mods: newMods, errors } = await get().processModsWithDependencies(
+        results,
+        existingModIds
+      );
 
-      for (const result of results) {
-        if (result.error) {
-          errors.push(`${result.modId}: ${result.error}`);
-        } else if (result.modId && result.modName) {
-          const existingMod = get().enabledMods.find(m => m.modId === result.modId);
-          if (!existingMod) {
-            successfulMods.push({
-              modId: result.modId,
-              name: result.modName,
-              version: "",
-              required: false
-            });
-          }
-        }
-      }
-
-      if (successfulMods.length > 0) {
+      if (newMods.length > 0) {
         set((s) => {
-          const newMods = [...s.enabledMods, ...successfulMods];
-          return updateModsAndConfig(s.config, newMods);
+          const modsMap = new Map<string, Mod>();
+          
+          s.enabledMods.forEach(mod => modsMap.set(mod.modId, mod));
+          
+          newMods.forEach(mod => modsMap.set(mod.modId, mod));
+          
+          return updateModsAndConfig(s.config, Array.from(modsMap.values()));
         });
       }
 
       if (errors.length > 0) {
         set({ 
           isImportingBatch: false,
-          batchImportError: `Some mods failed to import:\n${errors.join('\n')}`
+          batchImportError: `При импорте возникли проблемы:\n${errors.slice(0, 5).join('\n')}${errors.length > 5 ? '\n...и ещё ' + (errors.length - 5) + ' ошибок' : ''}`
         });
       } else {
         set({ 
