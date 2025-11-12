@@ -6,6 +6,7 @@ import type { ServerConfig, Mod } from "../types/serverConfig";
 import { supportedPlatforms } from "../utils/args";
 import { mergeMissionHeaderWithModConfigs, findModConfig } from "../utils/modConfigs";
 import { updateModsAndConfig } from "../utils/storeHelpers";
+import { searchMods, getModDependencies, fetchModsBatch, type ModSearchResult, type ModDependency } from "../api/modApi";
 
 const STORAGE_KEY = "arfc:state";
 
@@ -36,21 +37,6 @@ const loadFromLocalStorage = (): { config: ServerConfig; enabledMods: Mod[]; key
     return null;
   }
 };
-
-interface ModSearchResult {
-  author: string;
-  modId: string;
-  modName: string;
-  size: string;
-  image: string;
-  url: string;
-}
-
-interface ModDependency {
-  modId: string;
-  modName: string;
-  url: string;
-}
 
 interface ConfigState {
   config: ServerConfig;
@@ -335,13 +321,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     set({ isSearching: true, searchError: null });
     
     try {
-      const response = await fetch(`http://127.0.0.1:5000/search?name=${encodeURIComponent(query)}`);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      const results = Array.isArray(data) ? data : (data.Content || data.content || []);
+      const results = await searchMods(query);
       set({ 
         searchResults: results, 
         isSearching: false,
@@ -378,23 +358,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
   },
   getModDependencies: async (modId: string, modName: string): Promise<ModDependency[]> => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/mod', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          modId,
-          modName
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.dependencies || [];
+      return await getModDependencies(modId, modName);
     } catch (error) {
       console.error('Error fetching dependencies:', error);
       return [];
@@ -434,18 +398,8 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
         for (const dep of current.dependencies) {
           if (!processedMods.has(dep.modId)) {
             try {
-              const response = await fetch('http://127.0.0.1:5000/mods', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mods: [dep.modId] })
-              });
-
-              if (!response.ok) {
-                errors.push(`Failed to fetch dependency ${dep.modId} for ${modId}`);
-                continue;
-              }
-
-              const [depResult] = await response.json();
+              const depResults = await fetchModsBatch([dep.modId]);
+              const depResult = depResults[0];
               if (depResult.error) {
                 errors.push(`Dependency ${dep.modId} for ${modId}: ${depResult.error}`);
               } else {
@@ -481,17 +435,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     set({ isImportingBatch: true, batchImportError: null });
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/mods', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mods: validModIds })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
-      }
-
-      const results = await response.json();
+      const results = await fetchModsBatch(validModIds);
       
       const existingMods = get().enabledMods;
       const existingModIds = new Set(existingMods.map(m => m.modId));
