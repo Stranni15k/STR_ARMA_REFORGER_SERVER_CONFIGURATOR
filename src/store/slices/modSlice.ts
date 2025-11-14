@@ -148,37 +148,35 @@ export const createModSlice: StateCreator<
     try {
       const results = await fetchModsBatch(validModIds);
 
-      const existingMods = get().enabledMods;
-      const existingModIds = new Set(existingMods.map(m => m.modId));
+      const successfulMods: Mod[] = [];
+      const errors: string[] = [];
 
-      const { mods: newMods, errors } = await get().processModsWithDependencies(
-        results,
-        existingModIds
-      );
+      for (const r of results) {
+        const anyR = r as any;
+        if (anyR && !('error' in anyR) && anyR.modId && (anyR.modName || anyR.name)) {
+          successfulMods.push(createMod(anyR.modId, anyR.modName || anyR.name));
+        } else {
+          const id = anyR?.modId ?? 'unknown';
+          const err = anyR?.error ?? 'Invalid mod data';
+          errors.push(`${id}: ${err}`);
+        }
+      }
 
-      if (newMods.length > 0) {
+      if (successfulMods.length > 0) {
         set((s) => {
           const modsMap = new Map<string, Mod>();
-
           s.enabledMods.forEach(mod => modsMap.set(mod.modId, mod));
-
-          newMods.forEach(mod => modsMap.set(mod.modId, mod));
-
+          successfulMods.forEach(mod => modsMap.set(mod.modId, mod));
           return updateModsAndConfig(s.config, Array.from(modsMap.values()));
         });
       }
 
-      if (errors.length > 0) {
-        set({
-          isImportingBatch: false,
-          batchImportError: `Import issues occurred:\n${errors.slice(0, 5).join('\n')}${errors.length > 5 ? '\n...and ' + (errors.length - 5) + ' more errors' : ''}`
-        });
-      } else {
-        set({
-          isImportingBatch: false,
-          batchImportError: null
-        });
-      }
+      set({
+        isImportingBatch: false,
+        batchImportError: errors.length
+          ? `Import issues occurred:\n${errors.slice(0, 5).join('\n')}${errors.length > 5 ? '\n...and ' + (errors.length - 5) + ' more errors' : ''}`
+          : null
+      });
     } catch (error) {
       set({
         isImportingBatch: false,
