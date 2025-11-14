@@ -76,12 +76,12 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
         <div className="mod-card-body">
           <div className="mod-name d-flex align-items-center justify-content-between">
             <span>{mod.name}</span>
+            {getModDisplayName(mod.modId) && (
+              <span className="badge bg-success ms-2" title="Auto-configured missionHeader settings">
+                Headers supported
+              </span>
+            )}
           </div>
-          {getModDisplayName(mod.modId) && (
-            <span className="badge bg-success ms-2" title="Auto-configured missionHeader settings">
-              Auto-config
-            </span>
-          )}
           <div className="mod-id">ID: {mod.modId}</div>
         </div>
         <div className="mod-card-footer">
