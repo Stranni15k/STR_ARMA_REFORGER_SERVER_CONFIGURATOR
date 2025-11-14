@@ -93,6 +93,7 @@
   max-height: 55vh;
   overflow-y: auto;
   overflow-x: hidden;
+  grid-template-columns: 1fr;
 }
 
 .mods-container .mods-grid {
@@ -108,6 +109,7 @@
   flex-direction: column;
   transition: all 0.2s ease;
   overflow: hidden;
+  cursor: grab;
 }
 
 .mod-card-image {
@@ -130,6 +132,8 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
 }
+
+.mod-card--dragging { cursor: grabbing; }
 
 .mod-card-image {
   position: relative;
@@ -245,6 +249,120 @@
   display: flex;
   flex-direction: column;
   overflow: hidden; 
+}
+
+.mods-modal--top {
+  z-index: 2000;
+}
+
+.mods-modal--top .mods-modal-content {
+  z-index: 2010;
+}
+
+.mods-modal--top .mods-modal-backdrop {
+  z-index: 2005;
+}
+
+.mods-modal--narrow .mods-modal-content {
+  width: min(560px, 95%);
+}
+
+.deps-modal .mods-modal-content {
+  background: #0f141b !important;
+  border-color: rgba(255,255,255,0.08);
+}
+
+.deps-modal .mods-modal-header {
+  padding: 1rem 1.25rem;
+  border-bottom-color: rgba(255,255,255,0.06);
+}
+
+.deps-modal .mods-modal-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.deps-modal .mods-modal-body {
+  padding: 1rem 1.25rem;
+}
+
+.deps-modal .deps-desc {
+  text-align: center;
+}
+
+.deps-modal .mods-container {
+  background: transparent !important;
+  padding: 0;
+}
+
+.deps-modal .dep-card {
+  background: #1d2630 !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  text-align: left;
+}
+
+.deps-modal .dep-name { 
+  font-weight: 500; 
+  color: var(--bs-body-color); 
+}
+
+.deps-modal .dep-id { 
+  font-size: 0.78rem; 
+  color: rgba(230,238,248,0.6); 
+}
+
+.deps-modal .mods-modal-footer.vertical {
+  padding: 0.45rem 1.25rem 0.9rem;
+}
+
+.deps-modal .deps-separator {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14), rgba(255,255,255,0));
+  border-radius: 1px;
+  margin: 0.15rem 0 0.35rem;
+}
+
+.deps-modal .btn-affirm {
+  background: linear-gradient(180deg, #2AD196 0%, #0BB775 100%);
+  color: #ffffff;
+  font-weight: 400;
+  border: none;
+  border-radius: 12px;
+  padding: .65rem 1rem;
+  font-size: 0.875rem;
+}
+
+.deps-modal .btn-affirm:hover { filter: brightness(1.03); }
+
+.deps-modal .btn-secondary-ghost {
+  background: rgba(255,255,255,0.06);
+  color: #dbeeff;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: .62rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.deps-modal .mods-modal-footer.vertical .btn {
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.deps-modal .mods-modal-footer.vertical { gap: .4rem; }
+
+.mods-modal-footer.vertical {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1rem;
+}
+
+.mods-modal-footer.vertical .btn { 
+  width: 100%; 
+  text-align: center; 
 }
 
 .mods-modal-body {

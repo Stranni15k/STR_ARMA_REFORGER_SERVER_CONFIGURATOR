@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useConfigStore } from "../store/configStore";
 import { getModDisplayName } from "../utils/modConfigs";
+import type { ModSearchResult, ModDependency } from "../api/modApi";
+import ModDependenciesModal from "./ModDependenciesModal";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, type DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface ModsModalProps {
   isOpen: boolean;
@@ -15,12 +20,82 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
     searchError, 
     removeMod, 
     searchMods, 
-    addModFromSearch 
+    addModFromSearch,
+    getModDependencies,
+    reorderMods
   } = useConfigStore();
   
   const [addingMod, setAddingMod] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"search" | "enabled">("enabled");
+  const [pendingMod, setPendingMod] = useState<ModSearchResult | null>(null);
+  const [pendingDeps, setPendingDeps] = useState<ModDependency[]>([]);
+  const [depsModalOpen, setDepsModalOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 }
+    })
+  );
+
+  const onDragStart = (event: { active: { id: string | number } }) => {
+    setActiveId(String(event.active.id));
+  };
+
+  const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const fromIndex = enabledMods.findIndex(m => m.modId === String(active.id));
+    const toIndex = enabledMods.findIndex(m => m.modId === String(over.id));
+    if (fromIndex !== -1 && toIndex !== -1) {
+      reorderMods(fromIndex, toIndex);
+    }
+    setActiveId(null);
+  };
+
+  const onDragCancel = () => {
+    setActiveId(null);
+  };
+
+  function SortableModCard({ mod }: { mod: typeof enabledMods[number] }) {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: mod.modId });
+    const style: React.CSSProperties = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.85 : 1,
+    };
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className={`mod-card ${isDragging ? "mod-card--dragging" : ""}`}
+        {...attributes}
+        {...listeners}
+      >
+        <div className="mod-card-body">
+          <div className="mod-name d-flex align-items-center justify-content-between">
+            <span>{mod.name}</span>
+          </div>
+          {getModDisplayName(mod.modId) && (
+            <span className="badge bg-success ms-2" title="Auto-configured missionHeader settings">
+              Auto-config
+            </span>
+          )}
+          <div className="mod-id">ID: {mod.modId}</div>
+        </div>
+        <div className="mod-card-footer">
+          <button 
+            className="btn btn-sm btn-danger w-100"
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={() => removeMod(mod)}
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handleSearch = async () => {
     await searchMods(searchQuery);
@@ -32,13 +107,36 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
     }
   };
 
-  const handleAddMod = async (result: any) => {
+  const handleAddMod = async (result: ModSearchResult) => {
     setAddingMod(result.modId);
     try {
-      await addModFromSearch(result);
+      const deps = await getModDependencies(result.modId, result.modName);
+      const missingDeps = deps.filter(d => !enabledMods.some(m => m.modId === d.modId));
+
+      if (missingDeps.length > 0) {
+        setPendingMod(result);
+        setPendingDeps(missingDeps);
+        setDepsModalOpen(true);
+      } else {
+        await addModFromSearch(result);
+      }
     } finally {
       setAddingMod(null);
     }
+  };
+
+  const confirmAddPending = async (includeDependencies: boolean) => {
+    if (!pendingMod) return;
+    await addModFromSearch(pendingMod, { includeDependencies });
+    setDepsModalOpen(false);
+    setPendingMod(null);
+    setPendingDeps([]);
+  };
+
+  const closeDepsModal = () => {
+    setDepsModalOpen(false);
+    setPendingMod(null);
+    setPendingDeps([]);
   };
 
   if (!isOpen) return null;
@@ -139,40 +237,53 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
 
           {activeTab === "enabled" && (
             <div className="mods-enabled">
-            <h6 className="section-title mb-3">Enabled Mods ({enabledMods.length})</h6>
-            {enabledMods.length === 0 ? (
-              <div className="mods-list-empty muted-weak">No enabled mods</div>
-            ) : (
-              <div className="mods-grid">
-                {enabledMods.map((mod) => (
-                  <div key={mod.modId} className="mod-card">
-                    <div className="mod-card-body">
-                      <div className="mod-name">
-                        {mod.name}
-                        {getModDisplayName(mod.modId) && (
-                          <span className="badge bg-success ms-2" title="Auto-configured missionHeader settings">
-                            Auto-config
-                          </span>
-                        )}
-                      </div>
-                      <div className="mod-id">ID: {mod.modId}</div>
+              <h6 className="section-title mb-3">Enabled Mods ({enabledMods.length})</h6>
+              {enabledMods.length === 0 ? (
+                <div className="mods-list-empty muted-weak">No enabled mods</div>
+              ) : (
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={onDragCancel}>
+                  <SortableContext items={enabledMods.map(m => m.modId)} strategy={verticalListSortingStrategy}>
+                    <div className="mods-grid">
+                      {enabledMods.map((mod) => (
+                        <SortableModCard key={mod.modId} mod={mod} />
+                      ))}
                     </div>
-                    <div className="mod-card-footer">
-                      <button 
-                        className="btn btn-sm btn-danger w-100"
-                        onClick={() => removeMod(mod)}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  </SortableContext>
+                  <DragOverlay adjustScale={false} dropAnimation={null}>
+                    {(() => {
+                      const active = enabledMods.find(m => m.modId === activeId);
+                      if (!active) return null;
+                      return (
+                        <div className="mod-card">
+                          <div className="mod-card-body">
+                            <div className="mod-name d-flex align-items-center justify-content-between">
+                              <span>{active.name}</span>
+                            </div>
+                            {getModDisplayName(active.modId) && (
+                              <span className="badge bg-success ms-2" title="Auto-configured missionHeader settings">Auto-config</span>
+                            )}
+                            <div className="mod-id">ID: {active.modId}</div>
+                          </div>
+                          <div className="mod-card-footer">
+                            <button className="btn btn-sm btn-danger w-100" disabled>Remove</button>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </DragOverlay>
+                </DndContext>
+              )}
             </div>
           )}
         </div>
       </div>
+      <ModDependenciesModal
+        isOpen={depsModalOpen}
+        mod={pendingMod}
+        deps={pendingDeps}
+        onConfirm={confirmAddPending}
+        onClose={closeDepsModal}
+      />
     </div>
   );
 }
