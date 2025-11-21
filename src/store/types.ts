@@ -1,5 +1,5 @@
 import type { ServerConfig, Mod } from "../types/serverConfig";
-import type { ModSearchResult, ModDependency } from "../api/modApi";
+import type { ModSearchResult } from "../api/modApi";
 
 export interface FullStoreState {
   config: ServerConfig;
@@ -21,9 +21,8 @@ export interface FullStoreState {
   toggleMissionHeaderEnabled: (enabled: boolean) => void;
   toggleAdminsEnabled: (enabled: boolean) => void;
   searchMods: (query: string) => Promise<void>;
-  addModFromSearch: (searchResult: ModSearchResult, options?: { includeDependencies?: boolean }) => Promise<void>;
-  getModDependencies: (modId: string, modName: string) => Promise<ModDependency[]>;
-  processModsWithDependencies: (mods: any[], existingModIds: Set<string>) => Promise<{ mods: Mod[]; errors: string[] }>;
+  addModFromSearch: (searchResult: ModSearchResult) => Promise<void>;
+  processBatchMods: (mods: any[], existingModIds: Set<string>) => Promise<{ mods: Mod[]; errors: string[] }>;
   importModsBatch: (modIds: string[]) => Promise<void>;
   importModsList: (mods: Mod[]) => void;
 }

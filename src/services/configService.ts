@@ -102,7 +102,7 @@ export const importJson = (json: string): { config: ServerConfig; enabledMods: M
   }
 
   const enabled = res.data.game.mods || [];
-  const topKeys = Object.keys(parsed);
+  const topKeys = Object.keys(DEFAULT_CONFIG);
   const originalKeyPositions = Object.fromEntries(topKeys.map((k, i) => [k, i]));
 
   return {

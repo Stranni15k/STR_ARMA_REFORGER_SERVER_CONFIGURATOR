@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useConfigStore } from "../store/configStore";
 import { getModDisplayName } from "../utils/modConfigs";
-import type { ModSearchResult, ModDependency } from "../api/modApi";
-import ModDependenciesModal from "./ModDependenciesModal";
+import type { ModSearchResult } from "../api/modApi";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -22,16 +21,12 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
     removeMod, 
     searchMods, 
     addModFromSearch,
-    getModDependencies,
     reorderMods
   } = useConfigStore();
   
   const [addingMod, setAddingMod] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"search" | "enabled">("enabled");
-  const [pendingMod, setPendingMod] = useState<ModSearchResult | null>(null);
-  const [pendingDeps, setPendingDeps] = useState<ModDependency[]>([]);
-  const [depsModalOpen, setDepsModalOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -125,36 +120,13 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
     }
   };
 
-  const handleAddMod = async (result: ModSearchResult) => {
-    setAddingMod(result.modId);
+  const handleAddMod = async (mod: ModSearchResult) => {
+    setAddingMod(mod.modId);
     try {
-      const deps = await getModDependencies(result.modId, result.modName);
-      const missingDeps = deps.filter(d => !enabledMods.some(m => m.modId === d.modId));
-
-      if (missingDeps.length > 0) {
-        setPendingMod(result);
-        setPendingDeps(missingDeps);
-        setDepsModalOpen(true);
-      } else {
-        await addModFromSearch(result);
-      }
+      await addModFromSearch(mod);
     } finally {
       setAddingMod(null);
     }
-  };
-
-  const confirmAddPending = async (includeDependencies: boolean) => {
-    if (!pendingMod) return;
-    await addModFromSearch(pendingMod, { includeDependencies });
-    setDepsModalOpen(false);
-    setPendingMod(null);
-    setPendingDeps([]);
-  };
-
-  const closeDepsModal = () => {
-    setDepsModalOpen(false);
-    setPendingMod(null);
-    setPendingDeps([]);
   };
 
   if (!isOpen) return null;
@@ -235,7 +207,7 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
                       <div className="mod-name">{result.modName}</div>
                       <div className="mod-id">ID: {result.modId}</div>
                       <div className="control-help">
-                        Author: {result.author} • Size: {result.size}
+                        Author: {result.author}
                       </div>
                     </div>
                     <div className="mod-card-footer">
@@ -300,13 +272,6 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
           )}
         </div>
       </div>
-      <ModDependenciesModal
-        isOpen={depsModalOpen}
-        mod={pendingMod}
-        deps={pendingDeps}
-        onConfirm={confirmAddPending}
-        onClose={closeDepsModal}
-      />
     </div>
   );
 }

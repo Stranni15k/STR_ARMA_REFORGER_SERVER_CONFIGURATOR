@@ -19,6 +19,9 @@ export interface Mod {
   name: string;
   version?: string;
   required?: boolean;
+  author?: string;
+  size?: number;
+  url?: string;
 }
 
 export interface MissionHeader {

@@ -1,17 +1,20 @@
 import config from '../../config.json';
 
 export interface ModSearchResult {
-  author: string;
-  modId: string;
   modName: string;
-  size: string;
-  image: string;
+  modId: string;
+  author?: string;
+  size?: string;
+  image?: string;
   url: string;
 }
 
-export interface ModDependency {
+export interface ModInfo {
   modId: string;
   modName: string;
+  author?: string;
+  version?: string;
+  size?: string;
   url: string;
 }
 
@@ -23,31 +26,12 @@ export const searchMods = async (query: string): Promise<ModSearchResult[]> => {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   }
 
-  const data = await response.json();
-  return Array.isArray(data) ? data : (data.Content || data.content || []);
+  return await response.json();
 };
 
-export const getModDependencies = async (modId: string, modName: string): Promise<ModDependency[]> => {
-  const response = await fetch(`${config.apiUrl}/mod`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      modId,
-      modName
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-  }
-
-  const data = await response.json();
-  return data.dependencies || [];
-};
-
-export const fetchModsBatch = async (modIds: string[]): Promise<any[]> => {
+export const fetchModsBatch = async (modIds: string[]): Promise<ModInfo[]> => {
+  if (!modIds.length) return [];
+  
   const response = await fetch(`${config.apiUrl}/mods`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

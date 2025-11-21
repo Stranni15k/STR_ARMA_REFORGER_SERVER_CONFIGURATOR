@@ -4,7 +4,7 @@ import { useDebouncedArrayInput } from "../hooks/useDebouncedArrayInput";
 export default function Operating() {
   const { config, update, setNavmeshToggle } = useConfigStore();
   const o = config.operating;
-  const navmeshEnabled = o.disableNavmeshStreaming != null;
+  const navmeshEnabled = Array.isArray(o.disableNavmeshStreaming);
   
   const navmesh = useDebouncedArrayInput(o.disableNavmeshStreaming, (values) => 
     update("operating.disableNavmeshStreaming", values)

@@ -93,9 +93,19 @@ export const rebuildConfigWithKeyOrder = (
   key: string,
   originalPos?: number
 ): { config: ServerConfig; keyOrder: string[] } => {
+  let nextKeyOrder = [...keyOrder];
+  
+  if (!nextKeyOrder.includes(key)) {
+    if (typeof originalPos === "number" && originalPos >= 0 && originalPos <= nextKeyOrder.length) {
+      nextKeyOrder.splice(originalPos, 0, key);
+    } else {
+      nextKeyOrder.push(key);
+    }
+  }
+
   const out: any = {};
   const used = new Set<string>();
-  for (const k of keyOrder) {
+  for (const k of nextKeyOrder) {
     if (k in config) {
       out[k] = (config as any)[k];
       used.add(k);
@@ -103,15 +113,6 @@ export const rebuildConfigWithKeyOrder = (
   }
   for (const k of Object.keys(config)) {
     if (!used.has(k)) out[k] = (config as any)[k];
-  }
-
-  let nextKeyOrder = [...keyOrder];
-  if (!nextKeyOrder.includes(key)) {
-    if (typeof originalPos === "number" && originalPos >= 0 && originalPos <= nextKeyOrder.length) {
-      nextKeyOrder.splice(originalPos, 0, key);
-    } else {
-      nextKeyOrder.push(key);
-    }
   }
 
   return { config: out as ServerConfig, keyOrder: nextKeyOrder };

@@ -10,10 +10,8 @@ export const createConfigSlice: StateCreator<
   FullStoreState,
   [],
   [],
-  Pick<FullStoreState, 'keyOrder' | 'originalKeyPositions' | 'toggleRconEnabled' | 'update' | 'importJson' | 'exportJson' | 'removeMod' | 'setNavmeshToggle' | 'toggleMissionHeaderEnabled' | 'toggleAdminsEnabled'>
+  Pick<FullStoreState, 'toggleRconEnabled' | 'update' | 'importJson' | 'exportJson' | 'removeMod' | 'setNavmeshToggle' | 'toggleMissionHeaderEnabled' | 'toggleAdminsEnabled'>
 > = (set, get) => ({
-  keyOrder: [],
-  originalKeyPositions: {},
   toggleRconEnabled: (enabled: boolean) => {
     set((s) => {
       if (enabled) {
@@ -69,7 +67,19 @@ export const createConfigSlice: StateCreator<
     });
   },
   setNavmeshToggle: (enabled: boolean) => {
-    set((s) => ({ config: toggleGameProperty(s.config, "disableNavmeshStreaming", enabled, []) }));
+    set((s) => {
+      if (enabled) {
+        return { config: updateConfig(s.config, "operating.disableNavmeshStreaming", []) };
+      } else {
+        const { disableNavmeshStreaming, ...operating } = s.config.operating as any;
+        return {
+          config: {
+            ...s.config,
+            operating
+          }
+        };
+      }
+    });
   },
   toggleMissionHeaderEnabled: (enabled: boolean) => {
     set((s) => ({ config: toggleMissionHeader(s.config, enabled) }));
