@@ -34,6 +34,32 @@
 .app-header .btn-primary { box-shadow: 0 8px 30px rgba(56,122,255,0.12); }
 
 
+.menu-fade {
+  animation: ddFade .14s ease-out;
+  transform-origin: top left;
+}
+
+@keyframes ddFade {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.menu-slide-right {
+  position: absolute !important;
+  left: 100% !important;
+  right: auto !important;
+  top: 0 !important;
+  margin-left: 10px;
+  transform-origin: top left;
+  animation: menuSlideRight .16s ease-out;
+}
+
+@keyframes menuSlideRight {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+
 .chip {
   display:inline-flex; align-items:center; gap:.4rem; padding:.25rem .5rem; border-radius:999px;
   background: rgba(255,255,255,0.02); color: var(--bs-body-color); font-size:0.82rem; border:1px solid rgba(255,255,255,0.04);
@@ -365,8 +391,50 @@
   text-align: center; 
 }
 
+.dropdown-item {
+  color: var(--bs-body-color);
+  transition: all 0.15s ease;
+}
+
+.dropdown-item:hover, 
+.dropdown-item:focus {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.dropdown-item:active {
+  background-color: #f8f9fa !important;
+  color: #000 !important;
+}
+
+.dragging-active .mod-card {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.dnd-sortable-ghost {
+  opacity: 0.4;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px dashed rgba(255, 255, 255, 0.3) !important;
+}
+
+.mod-card {
+  touch-action: none;
+  cursor: grab;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.mod-card--dragging {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.no-pointer-events {
+  pointer-events: none;
+}
+
 .mods-modal-body {
   background: #0d1117 !important;
+  color: #ffffff;
 }
 
 .mods-modal-header {
@@ -379,7 +447,7 @@
 
 .mods-modal-header h2 {
   margin: 0;
-  color: var(--bs-body-color);
+  color: #ffffff;
   font-weight: 600;
 }
 
@@ -397,7 +465,7 @@
 }
 
 .mods-modal .nav-link {
-  color: var(--bs-body-color);
+  color: #ffffff;
   border: none;
   border-bottom: 2px solid transparent;
   background: transparent;
@@ -410,7 +478,7 @@
 }
 
 .mods-modal .nav-link.active {
-  color: var(--bs-primary);
+  color: #ffffff !important;
   border-bottom-color: var(--bs-primary);
   background: transparent;
 }

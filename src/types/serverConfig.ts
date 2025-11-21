@@ -32,9 +32,9 @@ export interface GameProperties {
   disableThirdPerson?: boolean;
   fastValidation?: boolean;
   battlEye?: boolean;
-  vonCanTransmitCrossFaction?: boolean;
-  vonDisableUI?: boolean;
-  vonDisableDirectSpeechUI?: boolean;
+  VONCanTransmitCrossFaction?: boolean;
+  VONDisableUI?: boolean;
+  VONDisableDirectSpeechUI?: boolean;
   missionHeader?: MissionHeader;
 }
 

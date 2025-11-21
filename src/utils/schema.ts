@@ -26,15 +26,8 @@ export const zServerConfig = z.object({
     scenarioId: z.string(),
     maxPlayers: z.number().int().min(1).max(128),
     visible: z.boolean().optional(),
-    modsRequiredByDefault: z.boolean().optional(),
     crossPlatform: z.boolean().optional(),
     supportedPlatforms: z.array(z.string()).optional(),
-    mods: z.array(z.object({ 
-      modId: z.string(), 
-      name: z.string(),
-      version: z.string().optional(),
-      required: z.boolean().optional()
-    })).optional(),
     gameProperties: z.object({
       serverMaxViewDistance: z.number().int().min(500).max(10000),
       serverMinGrassDistance: z.number().int().min(0).max(5000),
@@ -42,11 +35,18 @@ export const zServerConfig = z.object({
       disableThirdPerson: z.boolean().optional(),
       fastValidation: z.boolean().optional(),
       battlEye: z.boolean().optional(),
-      vonCanTransmitCrossFaction: z.boolean().optional(),
-      vonDisableUI: z.boolean().optional(),
-      vonDisableDirectSpeechUI: z.boolean().optional(),
+      VONCanTransmitCrossFaction: z.boolean().optional(),
+      VONDisableUI: z.boolean().optional(),
+      VONDisableDirectSpeechUI: z.boolean().optional(),
       missionHeader: z.record(z.string(), z.any()).optional(),
     }),
+    mods: z.array(z.object({ 
+      modId: z.string(), 
+      name: z.string(),
+      version: z.string().optional(),
+      required: z.boolean().optional()
+    })).optional(),
+    modsRequiredByDefault: z.boolean().optional()
   }),
   operating: z.object({
     lobbyPlayerSynchronise: z.boolean().optional(),

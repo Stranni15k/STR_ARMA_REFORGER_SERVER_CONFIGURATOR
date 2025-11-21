@@ -16,12 +16,12 @@ export default function Game() {
 
         <div className="field-group">
           <label className="field-label">Server Password</label>
-          <input className="form-control" type="password" value={g.password} onChange={e=>update("game.password", e.target.value)} />
+          <input className="form-control" value={g.password} onChange={e=>update("game.password", e.target.value)} />
         </div>
 
         <div className="field-group">
           <label className="field-label">Admin Password</label>
-          <input className="form-control" type="password" value={g.passwordAdmin} onChange={e=>update("game.passwordAdmin", e.target.value)} />
+          <input className="form-control" value={g.passwordAdmin} onChange={e=>update("game.passwordAdmin", e.target.value)} />
         </div>
 
         <div className="field-group">

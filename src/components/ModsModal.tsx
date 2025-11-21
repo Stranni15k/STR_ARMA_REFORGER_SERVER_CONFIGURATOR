@@ -6,6 +6,7 @@ import ModDependenciesModal from "./ModDependenciesModal";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import "../styles/ui.css";
 
 interface ModsModalProps {
   isOpen: boolean;
@@ -41,11 +42,20 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
 
   const onDragStart = (event: { active: { id: string | number } }) => {
     setActiveId(String(event.active.id));
+    document.body.classList.add('dragging-active');
+    document.body.style.userSelect = 'none';
   };
 
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (!over || active.id === over.id) return;
+    document.body.classList.remove('dragging-active');
+    document.body.style.userSelect = '';
+    
+    if (!over || active.id === over.id) {
+      setActiveId(null);
+      return;
+    }
+    
     const fromIndex = enabledMods.findIndex(m => m.modId === String(active.id));
     const toIndex = enabledMods.findIndex(m => m.modId === String(over.id));
     if (fromIndex !== -1 && toIndex !== -1) {
@@ -55,15 +65,23 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
   };
 
   const onDragCancel = () => {
+    document.body.classList.remove('dragging-active');
+    document.body.style.userSelect = '';
     setActiveId(null);
   };
 
   function SortableModCard({ mod }: { mod: typeof enabledMods[number] }) {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: mod.modId });
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
+      id: mod.modId,
+      transition: {
+        duration: 150,
+        easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
+      }
+    });
     const style: React.CSSProperties = {
       transform: CSS.Transform.toString(transform),
       transition,
-      opacity: isDragging ? 0.85 : 1,
+      opacity: isDragging ? 0 : 1,
     };
     return (
       <div
@@ -143,7 +161,10 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
 
   return (
     <div className="mods-modal">
-      <div className="mods-modal-backdrop" onClick={onClose}></div>
+      <div 
+        className={`mods-modal-backdrop ${activeId ? 'no-pointer-events' : ''}`}
+        onClick={onClose}
+      ></div>
       <div className="mods-modal-content">
         <div className="mods-modal-header">
           <h2>Manage Mods</h2>
@@ -254,14 +275,16 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
                       const active = enabledMods.find(m => m.modId === activeId);
                       if (!active) return null;
                       return (
-                        <div className="mod-card">
+                        <div className="mod-card" style={{ width: '100%' }}>
                           <div className="mod-card-body">
                             <div className="mod-name d-flex align-items-center justify-content-between">
                               <span>{active.name}</span>
+                              {getModDisplayName(active.modId) && (
+                                <span className="badge bg-success ms-2" title="Auto-configured missionHeader settings">
+                                  Headers supported
+                                </span>
+                              )}
                             </div>
-                            {getModDisplayName(active.modId) && (
-                              <span className="badge bg-success ms-2" title="Auto-configured missionHeader settings">Auto-config</span>
-                            )}
                             <div className="mod-id">ID: {active.modId}</div>
                           </div>
                           <div className="mod-card-footer">

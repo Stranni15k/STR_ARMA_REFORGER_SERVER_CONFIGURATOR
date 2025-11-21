@@ -22,10 +22,8 @@ export const DEFAULT_CONFIG: ServerConfig = {
     scenarioId: "",
     maxPlayers: 32,
     visible: true,
-    modsRequiredByDefault: true,
     crossPlatform: true,
     supportedPlatforms: ["PLATFORM_PC", "PLATFORM_XBL", "PLATFORM_PSN"],
-    mods: [],
     gameProperties: {
       serverMaxViewDistance: 2500,
       serverMinGrassDistance: 50,
@@ -33,15 +31,17 @@ export const DEFAULT_CONFIG: ServerConfig = {
       disableThirdPerson: false,
       fastValidation: false,
       battlEye: true,
-      vonCanTransmitCrossFaction: false,
-      vonDisableUI: false,
-      vonDisableDirectSpeechUI: false,
+      VONCanTransmitCrossFaction: false,
+      VONDisableUI: false,
+      VONDisableDirectSpeechUI: false,
       missionHeader: {
         m_iPlayerCount: 40,
         m_eEditableGameFlags: 6,
         m_eDefaultGameFlags: 6
       },
     },
+    mods: [],
+    modsRequiredByDefault: true
   },
   operating: {
     lobbyPlayerSynchronise: true,

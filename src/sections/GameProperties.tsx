@@ -42,20 +42,20 @@ export default function GameProperties() {
         </div>
 
         <div className="form-check mb-2">
-          <input className="form-check-input" type="checkbox" checked={p.vonCanTransmitCrossFaction ?? false}
-                 onChange={e=>update("game.gameProperties.vonCanTransmitCrossFaction", e.target.checked)} />
+          <input className="form-check-input" type="checkbox" checked={p.VONCanTransmitCrossFaction ?? false}
+                 onChange={e=>update("game.gameProperties.VONCanTransmitCrossFaction", e.target.checked)} />
           <label className="form-check-label">VON Cross Faction</label>
         </div>
 
         <div className="form-check mb-2">
-          <input className="form-check-input" type="checkbox" checked={p.vonDisableUI ?? false}
-                 onChange={e=>update("game.gameProperties.vonDisableUI", e.target.checked)} />
+          <input className="form-check-input" type="checkbox" checked={p.VONDisableUI ?? false}
+                 onChange={e=>update("game.gameProperties.VONDisableUI", e.target.checked)} />
           <label className="form-check-label">VON Disable UI</label>
         </div>
 
         <div className="form-check mb-2">
-          <input className="form-check-input" type="checkbox" checked={p.vonDisableDirectSpeechUI ?? false}
-                 onChange={e=>update("game.gameProperties.vonDisableDirectSpeechUI", e.target.checked)} />
+          <input className="form-check-input" type="checkbox" checked={p.VONDisableDirectSpeechUI ?? false}
+                 onChange={e=>update("game.gameProperties.VONDisableDirectSpeechUI", e.target.checked)} />
           <label className="form-check-label">VON Disable Direct Speech UI</label>
         </div>
     </div>

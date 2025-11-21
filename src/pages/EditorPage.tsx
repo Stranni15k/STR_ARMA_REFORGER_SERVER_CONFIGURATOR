@@ -1,7 +1,5 @@
-import ImportButton from "../components/ImportButton";
-import ImportModsButton from "../components/ImportModsButton";
-import ExportButton from "../components/ExportButton";
 import ResetButton from "../components/ResetButton";
+import TemplatesDropdown from "../components/TemplatesDropdown";
 import SectionLauncher from "../components/SectionLauncher";
 import Summary from "../sections/Summary";
 
@@ -10,9 +8,7 @@ export default function EditorPage() {
     <div className="app-container">
       <div className="app-header">
         <div className="button-group">
-          <ImportButton />
-          <ImportModsButton />
-          <ExportButton />
+          <TemplatesDropdown />
         </div>
         <div className="button-group">
           <ResetButton />

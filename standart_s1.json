@@ -1,0 +1,249 @@
+{
+  "bindAddress": "0.0.0.0",
+  "bindPort": 2001,
+  "publicAddress": "185.207.214.110",
+  "publicPort": 2001,
+  "a2s": {
+    "address": "0.0.0.0",
+    "port": 2005
+  },
+  "game": {
+    "name": "[RU] ECHO | SGA TTVT #1 | https:discord.gg/eotw",
+    "password": "",
+    "passwordAdmin": "ks1!",
+    "scenarioId": "",
+    "maxPlayers": 128,
+    "visible": true,
+    "crossPlatform": true,
+    "supportedPlatforms": [
+      "PLATFORM_PC",
+      "PLATFORM_XBL",
+      "PLATFORM_PSN"
+    ],
+    "gameProperties": {
+      "serverMaxViewDistance": 2500,
+      "serverMinGrassDistance": 56,
+      "networkViewDistance": 1500,
+      "disableThirdPerson": true,
+      "fastValidation": true,
+      "battlEye": true,
+      "VONDisableUI": true,
+      "VONDisableDirectSpeechUI": true,
+      "VONCanTransmitCrossFaction": true,
+      "missionHeader": {
+        "m_iPlayerCount": 40,
+        "m_eEditableGameFlags": 6,
+        "m_eDefaultGameFlags": 6,
+        "other": "values",
+        "m_ACE_Settings": {
+          "m_ACE_Medical_Core": {
+            "m_fDefaultResilienceRegenScale": 0.2,
+            "m_fMinHealthScaledForEpinephrine": 0.4,
+            "m_bBleedOutForPlayersEnabled": 1,
+            "m_fBleedingRateScale": 1.2,
+            "m_fMaxTotalBleedingRate": 25.0,
+            "m_fBloodRegenScale": 0.9,
+            "m_bHealSupplyUsageEnabled": 1,
+            "m_fMedicalKitMaxHealScaled": 0.65,
+            "m_ePainScreenEffectType": 2,
+            "m_fSecondChanceResilienceRegenScale": 0.0,
+            "m_fDefaultSecondChance": 0.8,
+            "m_fSecondChanceOnHead": 0.0,
+            "m_fSecondChanceOnChest": 0.6,
+            "m_fSecondChanceOnAbdomen": 0.7,
+            "m_bSecondChanceForFallDamageEnabled": 0,
+            "m_bSecondChanceForAIEnabled": 0
+          },
+          "m_ACE_Medical_Hitzones": {
+            "m_bOrganHitZonesEnabled": 1,
+            "m_fSecondChanceOnHeart": 0.0
+          },
+          "m_ACE_Medical_Circulation": {
+            "m_fDefaultHeartRateBPM": 80.0,
+            "m_fDefaultStrokeVolumeML": 95.0,
+            "m_fDefaultMeanArterialPressureKPA": 12.443,
+            "m_fDefaultPulsePressureKPA": 5.3329,
+            "m_UnstableThresholds": {
+              "m_fHeartRateLowBPM": 40.0,
+              "m_fHeartRateHighBPM": 220.0,
+              "m_fMeanArterialPressureLowKPA": 7.11,
+              "m_fMeanArterialPressureHighKPA": 29.5,
+              "m_fMaxHeartForMeanArterialPressureLowBPM": 80.0,
+              "m_eBloodState": 3
+            },
+            "m_CriticalThresholds": {
+              "m_fHeartRateLowBPM": 30.0,
+              "m_fHeartRateHighBPM": 220.0,
+              "m_fMeanArterialPressureLowKPA": 5.21,
+              "m_fMeanArterialPressureHighKPA": 29.5,
+              "m_fMaxHeartForMeanArterialPressureLowBPM": 40.0,
+              "m_eBloodState": 4
+            },
+            "m_CardiacArrestThresholds": {
+              "m_fHeartRateLowBPM": 20.0,
+              "m_fHeartRateHighBPM": 220.0,
+              "m_fMeanArterialPressureLowKPA": 5.21,
+              "m_fMeanArterialPressureHighKPA": 29.5,
+              "m_fMaxHeartForMeanArterialPressureLowBPM": 30.0,
+              "m_eBloodState": 5
+            },
+            "m_CardiacArrestDamageEffect": {
+              "m_fBrainDamageRate": 0.333,
+              "m_fEffectStartDelayS": 10.0
+            },
+            "m_bCardiacArrestForAIEnabled": 0,
+            "m_fCPRStrokeVolumeScale": 0.23,
+            "m_fCPRSuccessCheckTimeoutS": 22.0,
+            "m_fCPRSuccessChanceMin": 0.0,
+            "m_fCPRSuccessChanceMax": 0.35,
+            "m_fAmmoniumCarbonateSuccessChanceMin": 0.2,
+            "m_fAmmoniumCarbonateSuccessChanceMax": 1.0,
+            "m_fMaxRevivalResilienceRecoveryScale": 0.15,
+            "m_fCardiacArrestMaxTotalBleedingRate": 20.0
+          }
+        }
+      }
+    },
+    "mods": [
+      {
+        "modId": "5994AD5A9F33BE57",
+        "name": "Game Master FX",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "613B4DD4A91CA144",
+        "name": "LM Suppression",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "5AAAC70D754245DD",
+        "name": "Server Admin Tools",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "620A15433CA8D688",
+        "name": "WeakerWalls",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "64910C139D523A46",
+        "name": "ECHO - Mod Pack",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "65CF54A00534DB1C",
+        "name": "ECHOLobby_SquadTags",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "65A15B05893EE633",
+        "name": "EH_MOD",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "632137C83DA94DD5",
+        "name": "Realism Overhaul - Radios",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "631C9BBB1456E076",
+        "name": "Realism Overhaul - Sights",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "653ADE3A145FAAD9",
+        "name": "EchoLobby",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "65ED2205A5D31101",
+        "name": "FootPain",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "657AE8B1CE7C99E2",
+        "name": "Atmospheric Weather - The Fog",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "64ED6553B8AF6B62",
+        "name": "Atmospheric Weather Mod",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "65AD7CE59E8DB349",
+        "name": "ACE Trenches Dev",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "65AD7D0D9941A380",
+        "name": "ACE Core Dev",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "6586079789278413",
+        "name": "ACE Medical Core Dev",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "65AD7D4F994EA327",
+        "name": "ACE Medical Circulation Dev",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "65B343F799FB521B",
+        "name": "ACE Medical Hitzones Dev",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "65AD7C379CBD394D",
+        "name": "ACE Carrying Dev",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "6606CD369B5F31E7",
+        "name": "Lunacy Audio DEV",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "6606FA47AB771659",
+        "name": "LunacyAudioCommunityCompatsDEV",
+        "version": "",
+        "required": false
+      }
+    ],
+    "modsRequiredByDefault": false
+  },
+  "operating": {
+    "lobbyPlayerSynchronise": true,
+    "playerSaveTime": 120,
+    "aiLimit": -1,
+    "slotReservationTimeout": 60,
+    "disableServerShutdown": true,
+    "disableCrashReporter": false,
+    "disableAI": false,
+    "joinQueue": {
+      "maxSize": 0
+    }
+  }
+}
