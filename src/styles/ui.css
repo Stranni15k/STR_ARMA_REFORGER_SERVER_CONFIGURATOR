@@ -580,12 +580,12 @@
 
 .left-column { 
   display: flex; 
-  flex-direction: column; 
-  max-height: 78vh;
-  overflow: hidden;
+  flex-direction: column;
 }
 
-.left-column, .summary-column { min-height: 78vh; max-height: 78vh; }
+.summary-column { 
+  max-width: 100%;
+}
 
 
 .fieldset-content {
@@ -602,6 +602,92 @@
 .mods-list { overflow-y: auto; max-height: calc(70vh - 220px); padding-right: .25rem; }
 
 @media (max-width: 991.98px) {
+  html, body, #root {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .main-container {
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
+  .left-column, .summary-column { 
+    width: 100%;
+    max-width: 100%; 
+    min-height: auto;
+    height: auto !important;
+    padding: 0;
+    margin: 0;
+  }
   
-  .left-column, .summary-column { max-width: 100%; min-height: auto; }
+  .section-launcher { 
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+    margin-bottom: 1rem;
+  }
+  
+  .section-launcher .launcher-buttons { 
+    position: relative;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .section-launcher .section-inline-body { 
+    height: auto;
+    overflow: visible;
+    min-height: 0;
+    flex: 0 0 auto;
+  }
+  
+  .section-content { 
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 8px; 
+    border: 1px solid rgba(255,255,255,0.08); 
+    background: rgba(255,255,255,0.02);
+  }
+  
+  .mods-list { 
+    max-height: none;
+    overflow: visible;
+    padding: 0.5rem 0;
+  }
+  
+  .form-control, .form-select {
+    margin-bottom: 0.75rem;
+  }
+  
+  .json-preview-container {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .main-content {
+    height: auto !important;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    margin: 0.25rem 0;
+  }
 }
