@@ -22,6 +22,7 @@ export interface FullStoreState {
   toggleAdminsEnabled: (enabled: boolean) => void;
   searchMods: (query: string) => Promise<void>;
   addModFromSearch: (searchResult: ModSearchResult) => Promise<void>;
+  addManualMod: (modId: string, modName: string) => void;
   processBatchMods: (mods: any[], existingModIds: Set<string>) => Promise<{ mods: Mod[]; errors: string[] }>;
   importModsBatch: (modIds: string[]) => Promise<void>;
   importModsList: (mods: Mod[]) => void;

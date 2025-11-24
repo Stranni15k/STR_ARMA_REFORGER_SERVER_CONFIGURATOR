@@ -5,6 +5,7 @@ import type { ModSearchResult } from "../api/modApi";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import ManualModModal from "./ManualModModal";
 import "../styles/ui.css";
 
 interface ModsModalProps {
@@ -28,6 +29,7 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"search" | "enabled">("enabled");
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [showManualModal, setShowManualModal] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -161,6 +163,14 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
                 Search Mods
               </button>
             </li>
+            <li className="nav-item ms-auto">
+              <button 
+                className="nav-link"
+                onClick={() => setShowManualModal(true)}
+              >
+                Add Manually
+              </button>
+            </li>
           </ul>
           
           {activeTab === "search" && (
@@ -272,6 +282,11 @@ export default function ModsModal({ isOpen, onClose }: ModsModalProps) {
           )}
         </div>
       </div>
+      
+      <ManualModModal 
+        isOpen={showManualModal}
+        onClose={() => setShowManualModal(false)}
+      />
     </div>
   );
 }

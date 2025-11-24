@@ -130,12 +130,6 @@
         "required": false
       },
       {
-        "modId": "64910C139D523A46",
-        "name": "ECHO - Mod Pack",
-        "version": "",
-        "required": false
-      },
-      {
         "modId": "65CF54A00534DB1C",
         "name": "ECHOLobby_SquadTags",
         "version": "",
@@ -172,18 +166,6 @@
         "required": false
       },
       {
-        "modId": "657AE8B1CE7C99E2",
-        "name": "Atmospheric Weather - The Fog",
-        "version": "",
-        "required": false
-      },
-      {
-        "modId": "64ED6553B8AF6B62",
-        "name": "Atmospheric Weather Mod",
-        "version": "",
-        "required": false
-      },
-      {
         "modId": "65AD7CE59E8DB349",
         "name": "ACE Trenches Dev",
         "version": "",
@@ -216,6 +198,12 @@
       {
         "modId": "65AD7C379CBD394D",
         "name": "ACE Carrying Dev",
+        "version": "",
+        "required": false
+      },
+      {
+        "modId": "5F2944B7474F043F",
+        "name": "Disable Game Master Budgets",
         "version": "",
         "required": false
       },

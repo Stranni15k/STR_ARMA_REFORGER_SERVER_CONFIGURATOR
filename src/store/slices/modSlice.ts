@@ -56,7 +56,7 @@ export const createModSlice: StateCreator<
     'searchResults' | 'isSearching' | 'searchError' | 
     'isImportingBatch' | 'batchImportError' | 'searchMods' | 
     'addModFromSearch' | 'importModsBatch' | 'importModsList' | 
-    'reorderMods' | 'processBatchMods'
+    'reorderMods' | 'processBatchMods' | 'addManualMod'
   >
 > = (set, get) => ({
   searchResults: [],
@@ -101,6 +101,18 @@ export const createModSlice: StateCreator<
   
   addModFromSearch: async (searchResult: ModSearchResult) => {
     const mod = createMod(searchResult.modId, searchResult.modName);
+    set((s) => {
+      if (s.enabledMods.some(m => m.modId === mod.modId)) return s;
+      return updateModsAndConfig(s.config, [...s.enabledMods, mod]);
+    });
+  },
+
+  addManualMod: (modId: string, modName: string) => {
+    if (!modId.trim() || !modName.trim()) {
+      throw new Error('Both modId and modName are required');
+    }
+
+    const mod = createMod(modId.trim(), modName.trim());
     set((s) => {
       if (s.enabledMods.some(m => m.modId === mod.modId)) return s;
       return updateModsAndConfig(s.config, [...s.enabledMods, mod]);
